@@ -3,85 +3,75 @@ import streamlit as st
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - FORCE LIGHT BLUE & DESIGN (LOCKED)
+# 2. CSS - FINAL LOCKED DESIGN (V2.7)
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
     
-    /* FORCE LIGHT BLUE ON TITLES AND LABELS */
+    /* Global Light Blue for Headers and Labels */
     h1, h2, h3, .top-headline, p, span, label, li {
-        color: #1A73E8 !important; /* Reverted to Light Blue */
+        color: #1A73E8 !important;
         font-family: 'Segoe UI', sans-serif !important;
     }
-    
-    .stepper { display: flex; justify-content: center; margin-bottom: 25px; }
-    .step-dot { height: 6px; width: 35px; background-color: #1A73E8; border-radius: 4px; margin: 0 4px; }
-    .step-dot-off { height: 6px; width: 35px; background-color: #E2E8F0; border-radius: 4px; margin: 0 4px; }
 
-    /* Header Alignment: Icon and Text on same line */
-    .header-container {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 10px;
-    }
-
-    /* Next Button: Increased Width & Decreased Height */
-    div[data-testid="stButton"] button:has(div p:contains("Next")) {
+    /* Next, Create Account, and Back Buttons: Light Blue Background */
+    div[data-testid="stButton"] button:has(div p:contains("Next")),
+    div[data-testid="stButton"] button:has(div p:contains("Create account")),
+    div[data-testid="stButton"] button:has(div p:contains("Back")) {
         background-color: #1A73E8 !important;
         color: white !important;
         border-radius: 20px !important;
         border: none !important;
-        padding: 0 !important;
+        padding: 6px 15px !important;
         font-weight: 500 !important;
-        width: 120px !important; 
-        height: 32px !important; 
+        font-size: 14px !important;
+        box-shadow: none !important;
+    }
+
+    /* Adjusting "Next" specifically for that wide/short look */
+    div[data-testid="stButton"] button:has(div p:contains("Next")) {
+        width: 120px !important;
+        height: 32px !important;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto; 
     }
 
-    /* ID Box & Blinking Cursor (Caret) */
+    /* ID BOX: Blinking Cursor Enabled */
     .stTextInput>div>div>input {
         background-color: #F8FAFC !important;
         color: #000000 !important;
         border: 1px solid #747775 !important;
         border-radius: 4px !important;
         padding: 12px !important;
-        caret-color: #1A73E8 !important; /* Blue blinking line */
+        caret-color: #1A73E8 !important; /* Blinking blue line */
     }
     
-    /* FORGOT ID: Smaller words, No Button, 1.3cm Gap */
+    /* FORGOT ID: No background, Smaller letters, 1.5cm Gap */
     div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")) {
         background: transparent !important;
         border: none !important;
-        color: #1A73E8 !important;
+        color: #1A73E8 !important; /* Light blue text only */
         padding: 0 !important;
-        font-size: 11px !important; 
+        font-size: 10px !important; /* Decreased letter size */
+        font-weight: 500 !important;
         box-shadow: none !important;
         width: auto !important;
-        margin-top: 50px !important; /* 1.3cm gap */
+        margin-top: 55px !important; /* Precise 1.5cm gap */
         text-align: left !important;
     }
 
-    /* Create account text link */
-    div[data-testid="stButton"] button:has(div p:contains("Create account")) {
-        background: transparent !important;
-        border: none !important;
-        color: #1A73E8 !important;
-        padding: 0 !important;
-        font-size: 14px !important;
-        box-shadow: none !important;
-        width: auto !important;
-    }
+    /* Stepper Styling */
+    .stepper { display: flex; justify-content: center; margin-bottom: 25px; }
+    .step-dot { height: 6px; width: 35px; background-color: #1A73E8; border-radius: 4px; margin: 0 4px; }
+    .step-dot-off { height: 6px; width: 35px; background-color: #E2E8F0; border-radius: 4px; margin: 0 4px; }
 
     header {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# Session State
+# Session State Initialization
 if 'page' not in st.session_state: st.session_state.page = "welcome"
 if 'user_id' not in st.session_state: st.session_state.user_id = None
 
@@ -97,53 +87,53 @@ if st.session_state.page == "welcome":
 elif st.session_state.page == "auth":
     st.markdown("""<div class='stepper'><div class='step-dot'></div><div class='step-dot-off'></div><div class='step-dot-off'></div></div>""", unsafe_allow_html=True)
     
-    with st.container():
-        st.markdown("""
-            <div class='header-container'>
-                <img src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png' width='30'>
-                <h2>Med-Cloud Pro</h2>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("<h3>Sign in</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='margin-top:-15px; font-size:14px; color:#5F6368 !important;'>Access your secure health dashboard</p>", unsafe_allow_html=True)
-        
-        st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
-        user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_main")
-        
-        if st.button("Forgot ID?", key="forgot_final"):
-            st.session_state.page = "forgot_id"
-            st.rerun()
-
-        st.write("")
-        col_left, col_right = st.columns([1, 1])
-        with col_left:
-            if st.button("Create account", key="create_final"):
-                st.session_state.page = "create_account"
-                st.rerun()
-        with col_right:
-            if st.button("Next", key="next_final"):
-                if user_id_input:
-                    st.session_state.user_id = user_id_input
-                    st.session_state.page = "dashboard"
-                    st.rerun()
-                else:
-                    st.error("Please enter ID")
+    # Header: Icon and Name beside each other
+    st.markdown("""
+        <div style='display: flex; align-items: center; gap: 12px; margin-bottom: 10px;'>
+            <img src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png' width='30'>
+            <h2 style='margin:0;'>Med-Cloud Pro</h2>
+        </div>
+    """, unsafe_allow_html=True)
     
+    st.markdown("<h3>Sign in</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='margin-top:-15px; font-size:14px; color:#5F6368 !important;'>Access your secure health dashboard</p>", unsafe_allow_html=True)
+    
+    st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
+    user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_main")
+    
+    # Forgot ID - Text only, tiny, 1.5cm gap
+    if st.button("Forgot ID?", key="forgot_btn"):
+        st.session_state.page = "forgot_id"
+        st.rerun()
+
     st.write("")
-    if st.button("← Back", key="back_final"):
+    col_left, col_right = st.columns([1, 1])
+    with col_left:
+        # Create Account with Light Blue background
+        if st.button("Create account", key="create_btn"):
+            st.session_state.page = "create_account"
+            st.rerun()
+    with col_right:
+        # Next with Light Blue background
+        if st.button("Next", key="next_btn"):
+            if user_id_input:
+                st.session_state.user_id = user_id_input
+                st.session_state.page = "dashboard"
+                st.rerun()
+
+    st.write("")
+    # Back with Light Blue background
+    if st.button("← Back", key="back_btn"):
         st.session_state.page = "welcome"
         st.rerun()
 
 # --- OTHER PAGES ---
 elif st.session_state.page == "dashboard":
-    st.title("Dashboard")
+    st.title("Main Dashboard")
     if st.button("Logout"): st.session_state.page = "auth"; st.rerun()
-
 elif st.session_state.page == "forgot_id":
     st.title("Recovery")
     if st.button("Back"): st.session_state.page = "auth"; st.rerun()
-
 elif st.session_state.page == "create_account":
     st.title("Registration")
     if st.button("Back"): st.session_state.page = "auth"; st.rerun()
