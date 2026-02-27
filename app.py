@@ -172,3 +172,4 @@ elif st.session_state.page == "create_account":
         st.markdown(f"<div class='dashboard-card'><h2>{st.session_state.generated_id} (id)</h2></div>", unsafe_allow_html=True)
         if st.button("Go to Sign In"):
             st.session_state.page = "auth"; st.session_state.generated_id = None; st.rerun()
+
