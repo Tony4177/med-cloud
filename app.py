@@ -33,7 +33,7 @@ st.markdown("""
         margin: 0 auto; 
     }
 
-    /* Input Box Visibility & Cursor Focus */
+    /* Input Box Focus & Cursor Fix */
     ::placeholder { color: #4A5568 !important; opacity: 1; }
     .stTextInput>div>div>input {
         background-color: #F8FAFC !important;
@@ -42,23 +42,25 @@ st.markdown("""
         border-radius: 6px !important;
         padding: 10px !important;
         font-size: 16px !important;
-        cursor: text !important; /* Ensures cursor shows for typing */
-    }
-
-    /* FORGET ID - BACK TO ORIGINAL TEXT LINK (No Button Shape/Color) */
-    .forgot-link-btn {
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        color: #1A73E8 !important;
-        text-decoration: none !important;
-        font-size: 13px !important;
-        font-weight: 500 !important;
-        cursor: pointer !important;
-        margin-top: -30px; /* Aligned exactly below the box */
-        display: block;
+        cursor: text !important; /* Forces the typing cursor to appear */
     }
     
+    /* REMOVE BUTTON STYLE FOR FORGOT ID - JUST WORDS */
+    .forgot-text-link {
+        color: #1A73E8 !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        text-decoration: none;
+        cursor: pointer;
+        display: inline-block;
+        margin-top: -10px;
+        border: none;
+        background: none;
+    }
+    .forgot-text-link:hover {
+        text-decoration: underline;
+    }
+
     header {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
@@ -68,7 +70,7 @@ st.markdown("""
 if 'page' not in st.session_state: st.session_state.page = "welcome"
 if 'user_id' not in st.session_state: st.session_state.user_id = None
 
-# --- PAGE 1: WELCOME (LOCKED) ---
+# --- PAGE 1: WELCOME ---
 if st.session_state.page == "welcome":
     st.markdown("<div class='top-headline'>Smart Healthcare Monitoring & Caretaker Escalation</div>", unsafe_allow_html=True)
     st.image("https://img.freepik.com/free-vector/health-professional-team-concept-illustration_114360-1608.jpg", use_container_width=True)
@@ -81,7 +83,7 @@ if st.session_state.page == "welcome":
 
     st.markdown("<p class='center-text'>Thank you for choosing Med-Cloud to manage your health journey!</p>", unsafe_allow_html=True)
     st.write("")
-    if st.button("Continue ➔", key="btn_welcome"):
+    if st.button("Continue ➔", key="welcome_go"):
         st.session_state.page = "auth"
         st.rerun()
 
@@ -97,26 +99,28 @@ elif st.session_state.page == "auth":
         
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         
-        # User ID Input - Typing Enabled
-        user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_med_id")
+        # BIG BOX - Cursor Enabled
+        user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_field_main")
         
-        # Forgot ID - Text Link Only (No button styling)
-        if st.button("Forgot ID?", key="forgot_text_link", help="Recover your ID"):
+        # FORGOT ID - WORDS ONLY (NO BUTTON)
+        if st.button("Forgot ID?", key="just_words_link"):
             st.session_state.page = "forgot_id"
             st.rerun()
             
-        # CSS hack to make the above button look like a text link
+        # CSS to strip the button styling from the "Forgot ID?" button specifically
         st.markdown("""
             <style>
-            div[data-testid="stButton"] button[kind="secondary"]:has(div:contains("Forgot ID?")) {
+            div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")) {
                 background: none !important;
                 border: none !important;
                 color: #1A73E8 !important;
                 padding: 0 !important;
-                margin-top: -30px !important;
+                margin-top: -32px !important;
                 font-size: 13px !important;
-                text-align: left !important;
+                text-decoration: none !important;
+                box-shadow: none !important;
                 display: block !important;
+                text-align: left !important;
             }
             </style>
         """, unsafe_allow_html=True)
@@ -124,11 +128,11 @@ elif st.session_state.page == "auth":
         st.write("")
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
-            if st.button("Create account", key="btn_create"):
+            if st.button("Create account", key="create_btn"):
                 st.session_state.page = "create_account"
                 st.rerun()
         with c_act2:
-            if st.button("Next", key="btn_next"):
+            if st.button("Next", key="next_btn"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
                     st.session_state.page = "dashboard"
@@ -136,25 +140,19 @@ elif st.session_state.page == "auth":
                 else: st.error("Please enter ID")
 
     st.write("")
-    if st.button("← Back", key="btn_back"):
+    if st.button("← Back", key="back_btn"):
         st.session_state.page = "welcome"
         st.rerun()
 
-# --- NEW PAGES (PLACEHOLDERS) ---
+# --- OTHER PAGES ---
 elif st.session_state.page == "dashboard":
-    st.title(f"Dashboard: {st.session_state.user_id}")
-    if st.button("Logout"):
-        st.session_state.page = "auth"
-        st.rerun()
+    st.title("Main Dashboard")
+    if st.button("Logout"): st.session_state.page = "auth"; st.rerun()
 
 elif st.session_state.page == "forgot_id":
-    st.title("ID Recovery Page")
-    if st.button("Back"):
-        st.session_state.page = "auth"
-        st.rerun()
+    st.title("Recovery Page")
+    if st.button("Back"): st.session_state.page = "auth"; st.rerun()
 
 elif st.session_state.page == "create_account":
     st.title("Registration Page")
-    if st.button("Back"):
-        st.session_state.page = "auth"
-        st.rerun()
+    if st.button("Back"): st.session_state.page = "auth"; st.rerun()
