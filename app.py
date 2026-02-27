@@ -120,3 +120,4 @@ if st.session_state.page == "dashboard":
     if st.button("Sign Out"):
         st.session_state.page = "auth"
         st.rerun()
+
