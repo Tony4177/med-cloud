@@ -5,167 +5,118 @@ from datetime import time
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - ABSOLUTE FORCE (Removes Heart Stats & Overlapping Text)
+# 2. CSS - GLOBAL OVERLAP REMOVAL (Targeting all icons/arrows)
 st.markdown("""
     <style>
-    /* 1. FORCE THE ENTIRE APP TO STAY WHITE */
-    .stApp, [data-testid="stAppViewContainer"] {
-        background-color: #FFFFFF !important;
-    }
+    /* 1. FORCE LIGHT MODE */
+    .stApp { background-color: #FFFFFF !important; }
 
-    /* 2. COMPLETELY REMOVE THE "arrow_drop_down" GLITCH */
-    /* This targets the exact text causing the overlap in your screenshot */
+    /* 2. THE GLOBAL OVERLAP KILLER */
+    /* This removes "arrow_drop_down" from Expanders, Date Pickers, and Time Pickers */
+    span:contains("arrow_"), 
     .streamlit-expanderHeader span, 
     .streamlit-expanderHeader svg,
-    .streamlit-expanderHeader p::after {
+    div[data-baseweb="select"] svg,
+    div[data-baseweb="icon"] {
         display: none !important;
         visibility: hidden !important;
         content: "" !important;
+        width: 0px !important;
     }
     
-    /* 3. CLEAN BLUE BAR FOR PILL REMINDERS */
+    /* 3. STYLE THE HEADER BOX (Matches Image 2) */
     .streamlit-expanderHeader {
-        background-color: #F0F7FF !important;
-        border: 2px solid #1A73E8 !important;
-        border-radius: 10px !important;
-        color: #1A73E8 !important;
-        font-weight: bold !important;
+        background-color: #1E1E2E !important; /* Dark background from screenshot */
+        border-radius: 4px !important;
+        padding: 8px 12px !important;
+        border: none !important;
+    }
+    .streamlit-expanderHeader p {
+        color: #1A73E8 !important; /* Blue text from screenshot */
+        font-weight: 500 !important;
+        font-size: 16px !important;
     }
 
-    /* 4. FIX BLACK-ON-BLACK BOXES */
-    input, select, textarea, [data-baseweb="input"], .stNumberInput div {
+    /* 4. INPUT BOXES (White background, Blue borders to match Image 2) */
+    input, [data-baseweb="input"], [data-baseweb="select"], .stNumberInput div {
         background-color: #FFFFFF !important;
         color: #000000 !important;
-        border: 2px solid #1A73E8 !important;
+        border: 2px solid #1A73E8 !important; /* Blue border visibility */
     }
-    
-    /* 5. TEXT COLORS */
+
+    /* 5. TITLES AND LABELS (High Visibility Blue) */
     h1, h2, h3, h4, label, p, .stMarkdownContainer p {
         color: #1A73E8 !important;
         font-weight: 600 !important;
     }
 
-    /* 6. BUTTONS */
+    /* 6. BUTTON STYLE */
     div[data-testid="stButton"] button {
         background-color: #1A73E8 !important;
-        color: #FFFFFF !important;
+        color: white !important;
         border-radius: 8px !important;
-        width: 100% !important;
+        border: none !important;
+        font-weight: bold !important;
     }
 
-    /* 7. HEADER */
-    .dashboard-header { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        margin-bottom: 25px; 
-    }
-    .profile-icon { 
-        width: 45px; height: 45px; 
-        background-color: #E8F0FE; 
-        border-radius: 50%; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        border: 2px solid #1A73E8; 
-    }
-    
     header {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
 # --- SESSION STATE ---
-if 'page' not in st.session_state: st.session_state.page = "welcome"
-if 'current_user' not in st.session_state: st.session_state.current_user = None
+if 'page' not in st.session_state: st.session_state.page = "dashboard"
+if 'current_user' not in st.session_state: st.session_state.current_user = "wewfwef" # Matches your image
 if 'reminders' not in st.session_state: st.session_state.reminders = []
 
-# --- PAGE 1: WELCOME ---
-if st.session_state.page == "welcome":
-    st.markdown("<h1 style='text-align:center;'>Smart Healthcare Monitoring</h1>", unsafe_allow_html=True)
-    st.image("https://img.freepik.com/free-vector/health-professional-team-concept-illustration_114360-1608.jpg")
-    if st.button("Continue ➔"): 
-        st.session_state.page = "auth"
-        st.rerun()
-
-# --- PAGE 2: AUTH ---
-elif st.session_state.page == "auth":
-    st.markdown("<h3>Sign in</h3>", unsafe_allow_html=True)
-    user_id_input = st.text_input("Med-Cloud ID", placeholder="MED-1234")
+# --- MAIN DASHBOARD (EXACT MIRROR OF IMAGE 2) ---
+if st.session_state.page == "dashboard":
+    # Centered Title
+    st.markdown("<h1 style='text-align:center;'>Doctor Help</h1>", unsafe_allow_html=True)
+    st.markdown(f"### Patient Dashboard: {st.session_state.current_user}")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Create account"): st.session_state.page = "create_account"; st.rerun()
-    with col2:
-        if st.button("Next"):
-            if user_id_input: 
-                st.session_state.current_user = user_id_input
-                st.session_state.page = "dashboard"
-                st.rerun()
-
-# --- PAGE 3: DASHBOARD (HEART RATE & OXYGEN REMOVED) ---
-elif st.session_state.page == "dashboard":
-    st.markdown(f"""
-        <div class="dashboard-header">
-            <div class="profile-icon"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="35"></div>
-            <h2 style="margin:0;">Doctor Help</h2>
-            <div>
-                <div style="width:22px; height:3px; background:#1A73E8; margin:4px;"></div>
-                <div style="width:22px; height:3px; background:#1A73E8; margin:4px;"></div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown(f"<h3>Patient Dashboard: {st.session_state.current_user}</h3>", unsafe_allow_html=True)
     st.markdown("---")
+    st.markdown("## Pill Reminders")
     
-    # PILL REMINDERS ONLY (NO HEART/OXYGEN STATS)
-    st.markdown("<h3>Pill Reminders</h3>", unsafe_allow_html=True)
-    
+    # THE EXPANDER (Overlapping "arrow_drop_down" is now hidden globally)
     with st.expander("Add Medication Reminder", expanded=True):
-        med_name = st.text_input("Medicine Name", placeholder="e.g. Aspirin")
+        med_name = st.text_input("Medicine Name", placeholder="frgreg") 
         
-        c1, c2 = st.columns(2)
-        with c1: start_d = st.date_input("Start Date")
-        with c2: end_d = st.date_input("End Date")
+        # START/END DATE GRID
+        col_date1, col_date2 = st.columns(2)
+        with col_date1:
+            st.date_input("Start Date", key="s_date")
+        with col_date2:
+            st.date_input("End Date", key="e_date")
         
-        dosage = st.number_input("Dosage Per Day", min_value=1, max_value=8, value=1)
+        # DOSAGE (Matches Image 2 +/- buttons)
+        dosage = st.number_input("Dosage Per Day", min_value=1, max_value=8, value=4)
         
         st.write("Set Times:")
+        
+        # DOSE SLOTS (2-Column Grid)
         time_slots = []
-        t_cols = st.columns(2)
+        cols = st.columns(2)
         for i in range(int(dosage)):
-            with t_cols[i % 2]:
-                t = st.time_input(f"Dose {i+1}", value=time(8+(i*4)%24, 0), key=f"t_{i}")
-                time_slots.append(t.strftime("%I:%M %p"))
+            with cols[i % 2]:
+                # Default times as seen in your screenshot
+                times_list = [time(7, 30), time(12, 0), time(16, 0), time(20, 0)]
+                default_val = times_list[i] if i < len(times_list) else time(10, 0)
+                st.time_input(f"Dose {i+1}", value=default_val, key=f"dose_input_{i}")
 
-        st.markdown("#### Caretaker Details")
-        ct_name = st.text_input("Caretaker Name")
-        cp1, cp2 = st.columns(2)
-        with cp1: p1 = st.text_input("Primary Phone")
-        with cp2: p2 = st.text_input("Secondary Phone")
+        # CARETAKERS SECTION
+        st.markdown("### Caretaker Details")
+        st.text_input("Name", key="ct_name_field")
+        
+        col_p1, col_p2 = st.columns(2)
+        with col_p1:
+            st.text_input("Primary Phone", key="phone_1")
+        with col_p2:
+            st.text_input("Secondary Phone", key="phone_2")
 
-        if st.button("Set Reminder"):
-            if med_name:
-                st.session_state.reminders.append({"med": med_name, "times": ", ".join(time_slots)})
-                st.success("Reminder Saved!")
+        # SET REMINDER BUTTON
+        st.button("Set Reminder")
 
-    # Display Active List
-    for r in st.session_state.reminders:
-        st.info(f"💊 {r['med']} | Times: {r['times']}")
-
-    if st.button("Sign Out"): 
+    if st.button("Sign Out"):
         st.session_state.page = "auth"
         st.rerun()
-
-# --- OTHER PAGES ---
-elif st.session_state.page == "create_account":
-    st.markdown("<h3>Create Account</h3>", unsafe_allow_html=True)
-    if st.button("Register"):
-        st.session_state.generated_id = f"MED-{random.randint(1000, 9999)}"
-        st.rerun()
-    if 'generated_id' in st.session_state:
-        st.success(f"New ID: {st.session_state.generated_id}")
-        if st.button("Go to Sign In"): st.session_state.page = "auth"; st.rerun()
-
-
