@@ -22,43 +22,47 @@ st.markdown("""
     .stButton>button {
         background-color: #1A73E8 !important;
         color: white !important;
-        border-radius: 8px !important;
+        border-radius: 20px !important; /* Rounded like Google Next button */
         border: none !important;
-        padding: 8px 16px !important;
+        padding: 10px 24px !important;
         font-weight: 500 !important;
         font-size: 14px !important;
         width: auto !important;
-        min-width: 120px;
+        min-width: 100px;
         display: block;
         margin: 0 auto; 
     }
 
-    /* Input Box Focus & Cursor Fix */
+    /* Input Box Focus & BLINKING CURSOR */
     ::placeholder { color: #4A5568 !important; opacity: 1; }
     .stTextInput>div>div>input {
         background-color: #F8FAFC !important;
         color: #000000 !important;
         border: 1px solid #747775 !important;
-        border-radius: 6px !important;
-        padding: 10px !important;
+        border-radius: 4px !important;
+        padding: 12px !important;
         font-size: 16px !important;
-        cursor: text !important; /* Forces the typing cursor to appear */
+        caret-color: #1A73E8 !important; /* Blinking line color */
     }
     
-    /* REMOVE BUTTON STYLE FOR FORGOT ID - JUST WORDS */
-    .forgot-text-link {
+    /* GOOGLE STYLE TEXT LINK (No button background/border) */
+    .stButton>button[kind="secondary"] {
+        background: none !important;
+        border: none !important;
         color: #1A73E8 !important;
-        font-size: 13px !important;
+        text-transform: none !important;
+        padding: 0 !important;
+        font-size: 14px !important;
         font-weight: 500 !important;
-        text-decoration: none;
-        cursor: pointer;
-        display: inline-block;
-        margin-top: -10px;
-        border: none;
-        background: none;
+        width: auto !important;
+        min-width: 0 !important;
+        box-shadow: none !important;
+        margin-top: -15px !important;
+        text-align: left !important;
     }
-    .forgot-text-link:hover {
-        text-decoration: underline;
+    .stButton>button[kind="secondary"]:hover {
+        background: none !important;
+        text-decoration: underline !important;
     }
 
     header {visibility: hidden;}
@@ -102,33 +106,15 @@ elif st.session_state.page == "auth":
         # BIG BOX - Cursor Enabled
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_field_main")
         
-        # FORGOT ID - WORDS ONLY (NO BUTTON)
-        if st.button("Forgot ID?", key="just_words_link"):
+        # FORGOT ID - GOOGLE STYLE PLAIN TEXT (Secondary kind removes button styling)
+        if st.button("Forgot ID?", key="forgot_text", kind="secondary"):
             st.session_state.page = "forgot_id"
             st.rerun()
-            
-        # CSS to strip the button styling from the "Forgot ID?" button specifically
-        st.markdown("""
-            <style>
-            div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")) {
-                background: none !important;
-                border: none !important;
-                color: #1A73E8 !important;
-                padding: 0 !important;
-                margin-top: -32px !important;
-                font-size: 13px !important;
-                text-decoration: none !important;
-                box-shadow: none !important;
-                display: block !important;
-                text-align: left !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
 
         st.write("")
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
-            if st.button("Create account", key="create_btn"):
+            if st.button("Create account", key="create_btn", kind="secondary"):
                 st.session_state.page = "create_account"
                 st.rerun()
         with c_act2:
@@ -144,7 +130,7 @@ elif st.session_state.page == "auth":
         st.session_state.page = "welcome"
         st.rerun()
 
-# --- OTHER PAGES ---
+# --- NAVIGATION TARGETS ---
 elif st.session_state.page == "dashboard":
     st.title("Main Dashboard")
     if st.button("Logout"): st.session_state.page = "auth"; st.rerun()
