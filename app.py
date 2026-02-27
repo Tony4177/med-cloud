@@ -18,6 +18,7 @@ st.markdown("""
 
     .top-headline { text-align: center; color: #1E3A8A; font-weight: bold; font-size: 26px; margin-bottom: 10px; }
 
+    /* Main Action Buttons */
     .stButton>button {
         background-color: #1A73E8 !important;
         color: white !important;
@@ -32,6 +33,7 @@ st.markdown("""
         margin: 0 auto; 
     }
 
+    /* Input Box Placeholder & Visibility */
     ::placeholder { color: #4A5568 !important; opacity: 1; }
     .stTextInput>div>div>input {
         background-color: #F8FAFC !important;
@@ -42,18 +44,21 @@ st.markdown("""
         font-size: 16px !important;
     }
 
-    /* Forget ID - Half-distance below box */
-    .forgot-link {
+    /* Forget ID Link Style (Not a button) */
+    .forgot-link-wrapper {
+        margin-top: -8px; 
+        text-align: left;
+    }
+    .forgot-link-wrapper button {
+        background: none !important;
+        border: none !important;
         color: #1A73E8 !important;
+        padding: 0 !important;
         font-size: 13px !important;
         font-weight: 500 !important;
-        margin-top: -8px; 
-        display: block;
-        text-align: left;
-        background: none;
-        border: none;
-        padding: 0;
-        cursor: pointer;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        box-shadow: none !important;
     }
     
     header {visibility: hidden;}
@@ -78,11 +83,11 @@ if st.session_state.page == "welcome":
 
     st.markdown("<p class='center-text'>Thank you for choosing Med-Cloud to manage your health journey!</p>", unsafe_allow_html=True)
     st.write("")
-    if st.button("Continue ➔"):
+    if st.button("Continue ➔", key="welcome_continue"):
         st.session_state.page = "auth"
         st.rerun()
 
-# --- PAGE 2: AUTH (LOCKED DESIGN) ---
+# --- PAGE 2: AUTH (LOCKED DESIGN & FIXED INPUT) ---
 elif st.session_state.page == "auth":
     st.markdown("""<div class='stepper'><div class='step-dot'></div><div class='step-dot-off'></div><div class='step-dot-off'></div></div>""", unsafe_allow_html=True)
     with st.container():
@@ -91,23 +96,27 @@ elif st.session_state.page == "auth":
         with t_col: st.markdown("<h2 style='margin:0; color:#1E3A8A; font-size:22px;'>Med-Cloud Pro</h2>", unsafe_allow_html=True)
         st.markdown("<h3 style='margin-top:10px; font-size:24px;'>Sign in</h3>", unsafe_allow_html=True)
         st.markdown("<p style='margin-top:-15px; font-size:14px; color:#5F6368 !important;'>Access your secure health dashboard</p>", unsafe_allow_html=True)
+        
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         
-        user_id_input = st.text_input("", placeholder="ex: (MED-1234)", label_visibility="visible")
+        # FIXED: Text input is now fully accessible
+        user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="user_id_field")
         
-        # Link logic for Forgot ID
-        if st.button("Forgot ID?", key="forgot_link_actual", help="Click to recover ID"):
+        # Case 2: Forget ID trigger (STAYING AS TEXT LINK)
+        st.markdown("<div class='forgot-link-wrapper'>", unsafe_allow_html=True)
+        if st.button("Forgot ID?", key="forgot_link_actual"):
             st.session_state.page = "forgot_id"
             st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
         st.write("")
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
-            if st.button("Create account"):
+            if st.button("Create account", key="create_acc_btn"):
                 st.session_state.page = "create_account"
                 st.rerun()
         with c_act2:
-            if st.button("Next"):
+            if st.button("Next", key="next_btn"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
                     st.session_state.page = "dashboard"
@@ -115,27 +124,30 @@ elif st.session_state.page == "auth":
                 else: st.error("Please enter ID")
 
     st.write("")
-    if st.button("← Back"):
+    # Back button restored to bottom
+    if st.button("← Back", key="back_to_welcome"):
         st.session_state.page = "welcome"
         st.rerun()
 
-# --- NEW PAGES (POST-2.5) ---
+# --- CASE 1: DASHBOARD ---
 elif st.session_state.page == "dashboard":
     st.markdown(f"<h2 style='text-align:center;'>Dashboard: {st.session_state.user_id}</h2>", unsafe_allow_html=True)
     if st.button("Logout"):
         st.session_state.page = "auth"
         st.rerun()
 
+# --- CASE 2: FORGOT ID PAGE ---
 elif st.session_state.page == "forgot_id":
     st.subheader("ID Recovery")
-    st.text_input("Enter Phone")
+    st.write("Recovery options will appear here.")
     if st.button("← Back to Login"):
         st.session_state.page = "auth"
         st.rerun()
 
+# --- CASE 3: CREATE ACCOUNT PAGE ---
 elif st.session_state.page == "create_account":
     st.subheader("Registration")
-    st.text_input("Full Name")
+    st.write("Registration form will appear here.")
     if st.button("← Back to Login"):
         st.session_state.page = "auth"
         st.rerun()
