@@ -5,7 +5,7 @@ from datetime import time
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - ALL PAGES (Locked Sign-in + Main Page + Reminder Styling)
+# 2. CSS - CLEAN UI (Fixes dark boxes and aligns icons)
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
@@ -16,31 +16,40 @@ st.markdown("""
         font-family: 'Segoe UI', sans-serif !important;
     }
 
-    /* INPUT BOXES (Locked Style) */
-    .stTextInput>div>div>input {
+    /* INPUT BOXES - White background, Grey border, Blue cursor */
+    .stTextInput>div>div>input, .stNumberInput>div>div>input, .stTimeInput>div>div>input {
         background-color: #FFFFFF !important;
         color: #000000 !important;
-        border: 1px solid #747775 !important;
+        border: 1px solid #D1D5DB !important;
         border-radius: 4px !important;
-        padding: 12px !important;
+        padding: 10px !important;
         caret-color: #1A73E8 !important; 
     }
 
-    /* FORGOT ID (Locked Style) */
+    /* FIX FOR EXPANDER & TIME PICKER DARK BOXES */
+    .streamlit-expanderHeader {
+        background-color: #FFFFFF !important;
+        color: #1A73E8 !important;
+        border: 1px solid #E5E7EB !important;
+        border-radius: 8px !important;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+
+    /* FORGOT ID (Locked Page 2 design) */
     div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")) {
         background: transparent !important;
         border: none !important;
         color: #1A73E8 !important;
         padding: 0 !important;
         font-size: 11px !important;
-        box-shadow: none !important;
-        width: auto !important;
         margin-top: 55px !important;
         display: block !important;
-        text-align: left !important;
     }
 
-    /* PRIMARY BUTTONS (Locked Style) */
+    /* PRIMARY BUTTONS - Solid Light Blue */
     div[data-testid="stButton"] button:has(div p:contains("Next")),
     div[data-testid="stButton"] button:has(div p:contains("Create account")),
     div[data-testid="stButton"] button:has(div p:contains("Verify & Register")),
@@ -52,58 +61,22 @@ st.markdown("""
         color: white !important;
         border-radius: 20px !important;
         border: none !important;
-        padding: 4px 15px !important;
+        padding: 6px 20px !important;
         font-weight: 500 !important;
-        font-size: 14px !important;
     }
 
-    /* MAIN PAGE HEADER */
-    .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0px;
-        margin-bottom: 30px;
-    }
-    .profile-icon {
-        width: 42px;
-        height: 42px;
-        background-color: #E8F0FE;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
-    .menu-lines {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        cursor: pointer;
-    }
-    .line {
-        width: 24px;
-        height: 3px;
-        background-color: #1A73E8;
-        border-radius: 2px;
-    }
+    /* HEADER STYLING */
+    .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .profile-icon { width: 40px; height: 40px; background-color: #E8F0FE; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .line { width: 22px; height: 3px; background-color: #1A73E8; border-radius: 2px; margin: 3px 0; }
 
-    /* DASHBOARD CARDS & DISPLAYS */
+    /* DASHBOARD CARD */
     .dashboard-card {
-        padding: 20px;
-        border-radius: 15px;
-        background-color: #F0F7FF;
-        border-left: 5px solid #1A73E8;
-        margin-bottom: 20px;
-    }
-    
-    .id-display {
-        background-color: #F0F7FF;
-        border: 1px solid #1A73E8;
         padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        margin-top: 20px;
+        border-radius: 12px;
+        background-color: #F8FAFC;
+        border-left: 5px solid #1A73E8;
+        margin-bottom: 10px;
     }
 
     header {visibility: hidden;}
@@ -124,16 +97,14 @@ if st.session_state.page == "welcome":
     if st.button("Continue ➔", key="welcome_go"):
         st.session_state.page = "auth"; st.rerun()
 
-# --- PAGE 2: AUTH (SIGN IN) ---
+# --- PAGE 2: AUTH (SIGN IN) - LOCKED ---
 elif st.session_state.page == "auth":
     st.markdown("""<div style='display: flex; align-items: center; gap: 12px; margin-bottom: 10px;'><img src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png' width='30'><h2>Med-Cloud Pro</h2></div>""", unsafe_allow_html=True)
     st.markdown("<h3>Sign in</h3>", unsafe_allow_html=True)
     st.markdown("<p style='font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
     user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="login_id")
-    
     if st.button("Forgot ID?", key="forgot_btn"):
         st.session_state.page = "forgot_id"; st.rerun()
-
     col_l, col_r = st.columns([1, 1])
     with col_l:
         if st.button("Create account", key="create_trigger"):
@@ -144,76 +115,79 @@ elif st.session_state.page == "auth":
                 st.session_state.current_user = user_id_input
                 st.session_state.page = "dashboard"; st.rerun()
 
-    if st.button("← Back", key="back_welcome"):
-        st.session_state.page = "welcome"; st.rerun()
-
-# --- PAGE 3: MAIN PAGE (DOCTOR HELP + REMINDERS) ---
+# --- PAGE 3: MAIN DASHBOARD (RETIRED DARK BOXES) ---
 elif st.session_state.page == "dashboard":
-    # Header: Profile | Doctor Help | Menu
     st.markdown("""
         <div class="dashboard-header">
-            <div class="profile-icon">
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="35">
-            </div>
-            <h2 style="margin:0; font-weight: 600;">Doctor Help</h2>
+            <div class="profile-icon"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="30"></div>
+            <h2 style="margin:0;">Doctor Help</h2>
             <div class="menu-lines"><div class="line"></div><div class="line"></div><div class="line"></div></div>
         </div>
     """, unsafe_allow_html=True)
     
     st.markdown(f"<h3>Hello, {st.session_state.current_user}</h3>", unsafe_allow_html=True)
-    
-    # Vital Stats Cards
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("""<div class='dashboard-card'><p>Heart Rate</p><h2>72 BPM</h2></div>""", unsafe_allow_html=True)
-    with col2:
-        st.markdown("""<div class='dashboard-card'><p>Blood Oxygen</p><h2>98%</h2></div>""", unsafe_allow_html=True)
+
+    # VITAL CARDS
+    c1, c2 = st.columns(2)
+    with c1: st.markdown("""<div class='dashboard-card'><p style='margin:0; font-size:12px;'>Heart Rate</p><h2 style='margin:0;'>72 BPM</h2></div>""", unsafe_allow_html=True)
+    with c2: st.markdown("""<div class='dashboard-card'><p style='margin:0; font-size:12px;'>Blood Oxygen</p><h2 style='margin:0;'>98%</h2></div>""", unsafe_allow_html=True)
 
     st.markdown("---")
-
-    # PILL REMINDER SECTION
     st.markdown("<h3>Pill Reminders</h3>", unsafe_allow_html=True)
     
-    with st.expander("➕ Add New Medication Reminder", expanded=False):
-        med_name = st.text_input("Medicine Name", placeholder="e.g., Insulin")
-        dosage = st.text_input("Dosage", placeholder="e.g., 10 units / 1 Tablet")
-        med_time = st.time_input("Reminder Time", value=time(9, 0))
+    with st.expander("➕ Create Detailed Medication Schedule", expanded=True):
+        med_name = st.text_input("Medicine Name", placeholder="e.g., Aspirin")
         
-        if st.button("Set Reminder", key="save_pill"):
-            if med_name and dosage:
-                reminder_entry = f"Take {dosage} of {med_name} at {med_time.strftime('%I:%M %p')}"
-                st.session_state.reminders.append(reminder_entry)
-                st.success("Reminder Saved!")
-            else:
-                st.error("Please fill in medicine name and dosage.")
+        col_d1, col_d2 = st.columns(2)
+        with col_d1: start_date = st.date_input("Start Date")
+        with col_d2: end_date = st.date_input("End Date")
+        
+        # DYNAMIC DOSAGE LOGIC
+        dosage_per_day = st.number_input("Dosage Per Day (Number of Times)", min_value=1, max_value=10, value=1)
+        
+        st.write("Set Times for Each Dose:")
+        time_slots = []
+        t_cols = st.columns(2)
+        for i in range(int(dosage_per_day)):
+            with t_cols[i % 2]:
+                t = st.time_input(f"Dose {i+1} Time", value=time(8 + (i*4)%24, 0), key=f"dose_t_{i}")
+                time_slots.append(t.strftime("%I:%M %p"))
 
-    # Show active reminders
-    if st.session_state.reminders:
-        st.write("Current Schedule:")
-        for r in st.session_state.reminders:
-            st.info(r)
+        st.markdown("#### Caretaker Information")
+        ct_name = st.text_input("Caretaker Name", key="ct_name")
+        col_ct1, col_ct2 = st.columns(2)
+        with col_ct1: ct_phone1 = st.text_input("Primary Number", key="ct_p1")
+        with col_ct2: ct_phone2 = st.text_input("Secondary Number", key="ct_p2")
 
-    st.write("")
-    if st.button("Sign Out"):
-        st.session_state.page = "auth"; st.session_state.current_user = None; st.rerun()
+        if st.button("Set Reminder", key="final_save_pill"):
+            if med_name and ct_name:
+                entry = {
+                    "med": med_name,
+                    "duration": f"{start_date} to {end_date}",
+                    "times": ", ".join(time_slots),
+                    "caretaker": f"{ct_name} ({ct_phone1})"
+                }
+                st.session_state.reminders.append(entry)
+                st.success("Medication Schedule Saved!")
+
+    # Show Active List
+    for r in st.session_state.reminders:
+        st.info(f"💊 **{r['med']}** ({r['duration']})\n\n⏰ Times: {r['times']}\n\n👤 Care: {r['caretaker']}")
+
+    if st.button("Sign Out"): st.session_state.page = "auth"; st.rerun()
 
 # --- CREATE ACCOUNT PAGE ---
 elif st.session_state.page == "create_account":
     st.markdown("<h3>Create Account</h3>", unsafe_allow_html=True)
-    phone = st.text_input("Phone Number", placeholder="+1 (555) 000-0000")
-    otp = st.text_input("Enter 6-digit OTP", placeholder="· · · · · ·")
+    phone = st.text_input("Phone Number")
+    otp = st.text_input("OTP")
     if st.button("Verify & Register"):
-        if phone and otp:
-            st.session_state.generated_id = f"MED-{random.randint(1000, 9999)}"; st.rerun()
+        st.session_state.generated_id = f"MED-{random.randint(1000, 9999)}"; st.rerun()
     if st.session_state.generated_id:
-        st.markdown(f"""<div class="id-display"><h2>{st.session_state.generated_id} <span style="font-size:16px; color:#5F6368;">(id)</span></h2></div>""", unsafe_allow_html=True)
-        if st.button("Go to Sign In"):
-            st.session_state.page = "auth"; st.session_state.generated_id = None; st.rerun()
-    if not st.session_state.generated_id:
-        if st.button("← Back"): st.session_state.page = "auth"; st.rerun()
+        st.success(f"ID: {st.session_state.generated_id} (id)")
+        if st.button("Go to Sign In"): st.session_state.page = "auth"; st.session_state.generated_id = None; st.rerun()
 
 # --- FORGOT ID PAGE ---
 elif st.session_state.page == "forgot_id":
     st.title("Recovery")
     if st.button("← Back"): st.session_state.page = "auth"; st.rerun()
-
