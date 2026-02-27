@@ -168,3 +168,4 @@ elif st.session_state.page == "create_account":
         st.success(f"New ID: {st.session_state.generated_id}")
         if st.button("Go to Sign In"): st.session_state.page = "auth"; st.rerun()
 
+
