@@ -42,13 +42,18 @@ st.markdown("""
         font-size: 16px !important;
     }
 
+    /* Forget ID - Half-distance below box */
     .forgot-link {
         color: #1A73E8 !important;
         font-size: 13px !important;
         font-weight: 500 !important;
-        margin-top: -8px; /* FIXED: Positioned at half-distance below box */
+        margin-top: -8px; 
         display: block;
         text-align: left;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
     }
     
     header {visibility: hidden;}
@@ -77,7 +82,7 @@ if st.session_state.page == "welcome":
         st.session_state.page = "auth"
         st.rerun()
 
-# --- PAGE 2: AUTH (LOCKED) ---
+# --- PAGE 2: AUTH (LOCKED DESIGN) ---
 elif st.session_state.page == "auth":
     st.markdown("""<div class='stepper'><div class='step-dot'></div><div class='step-dot-off'></div><div class='step-dot-off'></div></div>""", unsafe_allow_html=True)
     with st.container():
@@ -87,55 +92,50 @@ elif st.session_state.page == "auth":
         st.markdown("<h3 style='margin-top:10px; font-size:24px;'>Sign in</h3>", unsafe_allow_html=True)
         st.markdown("<p style='margin-top:-15px; font-size:14px; color:#5F6368 !important;'>Access your secure health dashboard</p>", unsafe_allow_html=True)
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
+        
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", label_visibility="visible")
         
-        # Case 2: Forget ID trigger
-        if st.markdown("<span class='forgot-link' style='cursor:pointer;'>Forgot ID?</span>", unsafe_allow_html=True):
-             pass # This is a placeholder for the visual link. The button below handles logic.
+        # Link logic for Forgot ID
+        if st.button("Forgot ID?", key="forgot_link_actual", help="Click to recover ID"):
+            st.session_state.page = "forgot_id"
+            st.rerun()
 
         st.write("")
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
-            if st.button("Create account"): # Case 3
+            if st.button("Create account"):
                 st.session_state.page = "create_account"
                 st.rerun()
         with c_act2:
-            if st.button("Next"): # Case 1
+            if st.button("Next"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
                     st.session_state.page = "dashboard"
                     st.rerun()
                 else: st.error("Please enter ID")
 
-    # Hidden logic to handle the Forget ID click since it's a span
-    if st.button("I forgot my ID", key="forgot_logic_btn"):
-        st.session_state.page = "forgot_id"
+    st.write("")
+    if st.button("← Back"):
+        st.session_state.page = "welcome"
         st.rerun()
 
-# --- CASE 1: DASHBOARD ---
+# --- NEW PAGES (POST-2.5) ---
 elif st.session_state.page == "dashboard":
-    st.markdown(f"<h2 style='text-align:center; color:#1E3A8A;'>Welcome, {st.session_state.user_id}</h2>", unsafe_allow_html=True)
-    st.info("Your Dashboard is ready. Add your medical schedule here.")
+    st.markdown(f"<h2 style='text-align:center;'>Dashboard: {st.session_state.user_id}</h2>", unsafe_allow_html=True)
     if st.button("Logout"):
         st.session_state.page = "auth"
         st.rerun()
 
-# --- CASE 2: FORGOT ID ---
 elif st.session_state.page == "forgot_id":
-    st.markdown("<h2 style='color:#1E3A8A;'>ID Recovery</h2>", unsafe_allow_html=True)
-    phone = st.text_input("Enter Registered Phone Number")
-    if st.button("Recover ID"):
-        st.success("ID recovery instructions sent!")
-    if st.button("← Back"):
+    st.subheader("ID Recovery")
+    st.text_input("Enter Phone")
+    if st.button("← Back to Login"):
         st.session_state.page = "auth"
         st.rerun()
 
-# --- CASE 3: CREATE ACCOUNT ---
 elif st.session_state.page == "create_account":
-    st.markdown("<h2 style='color:#1E3A8A;'>Register New Patient</h2>", unsafe_allow_html=True)
+    st.subheader("Registration")
     st.text_input("Full Name")
-    if st.button("Register"):
-        st.success("Account created successfully!")
-    if st.button("← Back"):
+    if st.button("← Back to Login"):
         st.session_state.page = "auth"
         st.rerun()
