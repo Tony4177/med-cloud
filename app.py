@@ -4,7 +4,7 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - Version 2.5 (LOCKED DESIGN + BLINKING CURSOR)
+# 2. CSS - Version 2.5 (LOCKED DESIGN)
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
@@ -33,7 +33,7 @@ st.markdown("""
         margin: 0 auto; 
     }
 
-    /* Input Box Focus & BLINKING CURSOR */
+    /* Input Box & BLINKING CURSOR */
     ::placeholder { color: #4A5568 !important; opacity: 1; }
     .stTextInput>div>div>input {
         background-color: #F8FAFC !important;
@@ -42,28 +42,35 @@ st.markdown("""
         border-radius: 4px !important;
         padding: 12px !important;
         font-size: 16px !important;
-        caret-color: #1A73E8 !important; /* This is the blinking line */
+        caret-color: #1A73E8 !important; /* Blinking cursor color */
     }
     
-    /* GOOGLE STYLE TEXT LINK FOR FORGOT ID & CREATE ACCOUNT */
-    /* Target buttons with specific keys to strip their styling */
+    /* REMOVE ALL BUTTON STYLING FROM FORGOT ID & CREATE ACCOUNT */
     div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")),
     div[data-testid="stButton"] button:has(div p:contains("Create account")) {
-        background: none !important;
+        background: transparent !important;
         border: none !important;
         color: #1A73E8 !important;
         padding: 0 !important;
-        font-size: 14px !important;
         font-weight: 500 !important;
         box-shadow: none !important;
         width: auto !important;
         display: inline-block !important;
         text-align: left !important;
+        transition: none !important;
     }
 
-    /* Special position for Forgot ID to be tight under the box */
+    /* SPECIFIC FIX FOR FORGOT ID: Smaller words and precise position */
     div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")) {
-        margin-top: -30px !important;
+        margin-top: -38px !important; /* Pulls it tight under the box */
+        font-size: 12px !important; /* Reduced size of words */
+    }
+    
+    /* Hover effect for text links */
+    div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")):hover,
+    div[data-testid="stButton"] button:has(div p:contains("Create account")):hover {
+        text-decoration: underline !important;
+        background: transparent !important;
     }
 
     header {visibility: hidden;}
@@ -104,10 +111,10 @@ elif st.session_state.page == "auth":
         
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         
-        # BIG BOX - With Blinking line
+        # BIG BOX - Typing cursor enabled
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_field_main")
         
-        # FORGOT ID - Styled via CSS to be words only
+        # FORGOT ID - Now looks like plain, smaller blue text
         if st.button("Forgot ID?", key="forgot_text_link"):
             st.session_state.page = "forgot_id"
             st.rerun()
@@ -115,12 +122,12 @@ elif st.session_state.page == "auth":
         st.write("")
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
-            # CREATE ACCOUNT - Also styled via CSS to be words only
+            # Create account - Styled as plain text link
             if st.button("Create account", key="create_btn"):
                 st.session_state.page = "create_account"
                 st.rerun()
         with c_act2:
-            # NEXT - Stays a pill-shaped blue button
+            # Next - Pill-shaped button
             if st.button("Next", key="next_btn"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
@@ -133,7 +140,7 @@ elif st.session_state.page == "auth":
         st.session_state.page = "welcome"
         st.rerun()
 
-# --- NAVIGATION TARGETS ---
+# --- REDIRECT PAGES ---
 elif st.session_state.page == "dashboard":
     st.title("Main Dashboard")
     if st.button("Logout"): st.session_state.page = "auth"; st.rerun()
