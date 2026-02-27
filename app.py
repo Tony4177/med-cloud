@@ -24,16 +24,17 @@ st.markdown("""
         margin-bottom: 10px;
     }
 
-    /* Main Action Button (Next) - Reduced Width */
-    .stButton>button {
+    /* Main Action Button (Next) - INCREASED WIDTH & DECREASED HEIGHT */
+    div[data-testid="stButton"] button:has(div p:contains("Next")) {
         background-color: #1A73E8 !important;
         color: white !important;
         border-radius: 20px !important;
         border: none !important;
-        padding: 8px 12px !important; /* Thinner padding */
+        padding: 4px 0px !important; /* Decreased height by reducing vertical padding */
         font-weight: 500 !important;
         font-size: 14px !important;
-        width: 80px !important; /* Reduced width */
+        width: 110px !important; /* Increased width */
+        height: 32px !important; /* Fixed shorter height */
         display: block;
         margin: 0 auto; 
     }
@@ -57,12 +58,12 @@ st.markdown("""
         color: #1A73E8 !important;
         padding: 0 !important;
         font-weight: 500 !important;
-        font-size: 11px !important; /* Reduced size more */
+        font-size: 11px !important; 
         box-shadow: none !important;
         width: auto !important;
         display: block !important;
         text-align: left !important;
-        margin-top: 15px !important; /* Creating the 1.3cm visual gap */
+        margin-top: 25px !important; /* 1.3cm gap from box */
         margin-bottom: 20px !important;
     }
 
@@ -100,7 +101,6 @@ elif st.session_state.page == "auth":
     st.markdown("""<div class='stepper'><div class='step-dot'></div><div class='step-dot-off'></div><div class='step-dot-off'></div></div>""", unsafe_allow_html=True)
     
     with st.container():
-        # Header with Logo and Name beside each other
         st.markdown("""
             <div class='header-container'>
                 <img src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png' width='30'>
@@ -114,7 +114,6 @@ elif st.session_state.page == "auth":
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_main")
         
-        # Forgot ID - Pure words, no button color, small size, 1.3cm gap
         if st.button("Forgot ID?", key="forgot_final"):
             st.session_state.page = "forgot_id"
             st.rerun()
@@ -136,7 +135,7 @@ elif st.session_state.page == "auth":
         st.session_state.page = "welcome"
         st.rerun()
 
-# --- TARGET PAGES ---
+# --- OTHER PAGES ---
 elif st.session_state.page == "dashboard":
     st.title("Main Dashboard")
     if st.button("Logout"): st.session_state.page = "auth"; st.rerun()
