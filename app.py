@@ -4,13 +4,12 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - Final Layout with 2cm distance
+# 2. CSS - Lighter Blue & Precise "Half-Distance" Spacing
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
     p, span, label, li { color: #1E3A8A !important; font-family: 'Segoe UI', sans-serif; }
 
-    /* Centered Text for Page 1 */
     .center-text {
         text-align: center !important;
         display: block;
@@ -18,7 +17,6 @@ st.markdown("""
         margin-right: auto;
     }
 
-    /* Progress Stepper */
     .stepper {
         display: flex; justify-content: center; margin-bottom: 25px;
     }
@@ -29,12 +27,10 @@ st.markdown("""
         height: 6px; width: 35px; background-color: #E2E8F0; border-radius: 4px; margin: 0 4px;
     }
 
-    /* Headline */
     .top-headline {
         text-align: center; color: #1E3A8A; font-weight: bold; font-size: 26px; margin-bottom: 10px;
     }
 
-    /* Main Action Buttons (#1A73E8) */
     .stButton>button {
         background-color: #1A73E8 !important;
         color: white !important;
@@ -49,7 +45,6 @@ st.markdown("""
         margin: 0 auto; 
     }
 
-    /* Input Box Placeholder Visibility */
     ::placeholder {
         color: #4A5568 !important; 
         opacity: 1; 
@@ -63,12 +58,12 @@ st.markdown("""
         font-size: 16px !important;
     }
 
-    /* Forget ID - Positioned 2cm (approx 75px) below the box */
+    /* Forget ID - Positioned at half-distance below the box */
     .forgot-link {
         color: #1A73E8 !important;
         font-size: 13px !important;
         font-weight: 500 !important;
-        margin-top: 15px; /* Added positive margin for distance */
+        margin-top: -8px; /* Pulled up slightly to cut the distance in half */
         display: block;
         text-align: left;
     }
@@ -115,16 +110,15 @@ elif st.session_state.page == "auth":
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", label_visibility="visible")
         
-        # Positioned BELOW with distance
+        # Positioned exactly at half-distance
         st.markdown("<span class='forgot-link'>Forgot ID?</span>", unsafe_allow_html=True)
         
         st.write("")
-        st.write("") # Extra spacer to account for the distance
         
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
             if st.button("Create account", key="create"): st.info("ID: MED-XXXX")
-        with col_act2:
+        with c_act2:
             if st.button("Next", key="next"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
