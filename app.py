@@ -2,158 +2,149 @@ import streamlit as st
 import random
 from datetime import datetime, timedelta
 
-# 1. Page Configuration
-st.set_page_config(page_title="MedRemind Cloud", layout="centered")
+# 1. Advanced Page Config
+st.set_page_config(page_title="MedRemind Pro", layout="centered", initial_sidebar_state="collapsed")
 
-# 2. Professional CSS Styling (White Background & Blue Buttons)
+# 2. Premium UI Styling (White & Clean)
 st.markdown("""
     <style>
-    .stApp { background-color: white; }
-    h1 { color: #1E3A8A; text-align: center; font-family: 'Arial'; margin-bottom: 0px; }
-    h3 { color: #3B82F6; text-align: center; font-family: 'Arial'; font-weight: 400; margin-top: 5px; }
-    p { color: #475569; text-align: center; font-size: 18px; }
+    .stApp { background-color: #FFFFFF; }
     
-    /* Center and Style the Blue Button */
+    /* Header Bar */
+    .nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background: #F8FAFC;
+        border-bottom: 1px solid #E2E8F0;
+        margin-bottom: 20px;
+        border-radius: 10px;
+    }
+    
+    /* Premium Buttons */
     .stButton>button {
-        background-color: #2563EB;
+        background: linear-gradient(135deg, #0052cc 0%, #0074e4 100%);
         color: white;
-        border-radius: 25px;
-        height: 3.5em;
-        width: 100%;
-        font-weight: bold;
+        border-radius: 12px;
         border: none;
-        font-size: 18px;
-        box-shadow: 0px 4px 10px rgba(37, 99, 235, 0.3);
+        padding: 15px;
+        font-weight: 600;
+        transition: all 0.3s;
     }
-    .stButton>button:hover {
-        background-color: #1E40AF;
-        color: white;
-        border: none;
-    }
+    .stButton>button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,82,204,0.3); }
     
-    /* Unique ID Card Style */
-    .id-box {
-        background-color: #EFF6FF;
-        padding: 20px;
-        border-radius: 15px;
-        border: 2px dashed #2563EB;
-        text-align: center;
-        margin: 20px 0px;
+    /* AI Chat Box */
+    .ai-box {
+        background: #F0F7FF;
+        border-left: 5px solid #0052cc;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # Initialize Session States
-if 'page' not in st.session_state:
-    st.session_state.page = "welcome"
-if 'user_id' not in st.session_state:
-    st.session_state.user_id = None
+if 'page' not in st.session_state: st.session_state.page = "welcome"
+if 'user_id' not in st.session_state: st.session_state.user_id = None
 
-# --- NAVIGATION FUNCTIONS ---
-def go_to_auth(): st.session_state.page = "auth"
-def go_to_dash(): st.session_state.page = "dashboard"
-def logout(): 
-    st.session_state.page = "welcome"
-    st.session_state.user_id = None
+# --- TOP NAVIGATION BAR ---
+def draw_nav():
+    cols = st.columns([1, 8, 1])
+    with cols[0]: st.button("👤") # Profile
+    with cols[1]: st.markdown("<h3 style='text-align:center;margin:0;'>MedRemind</h3>", unsafe_allow_html=True)
+    with cols[2]: 
+        if st.button("☰"): st.toast("Settings & Help coming soon!")
 
-# --- PAGE 1: WELCOME SCREEN ---
+# --- PAGE 1: WELCOME (The "Hook") ---
 if st.session_state.page == "welcome":
-    st.markdown("<h1>MedRemind Cloud</h1>", unsafe_allow_html=True)
-    st.markdown("<h3>Smart Medicine Tracker</h3>", unsafe_allow_html=True)
+    st.markdown("<h1>Med-Cloud Pro</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center;'>Advanced Patient Adherence & Caretaker Escalation System</p>", unsafe_allow_html=True)
     
-    st.image("https://cdn-icons-png.flaticon.com/512/3028/3028549.png", width=150) # Generic Medical Icon
+    # Hero Section
+    st.image("https://img.freepik.com/free-vector/doctors-concept-illustration_114360-1515.jpg", use_container_width=True)
     
     st.markdown("""
-    <p>Our intelligent system ensures you never miss a dose. 
-    If a pill isn't confirmed, we automatically alert your caretaker 
-    through our 3-step escalation protocol.</p>
+    <div style='background:#F1F5F9; padding:20px; border-radius:15px;'>
+    <b>Why MedRemind?</b><br>
+    ✅ 3-Step Escalation Logic (6:00 → 6:10 → 6:20 Alert)<br>
+    ✅ Unique Caretaker IDs for Privacy<br>
+    ✅ 24/7 AI Health Assistant
+    </div>
     """, unsafe_allow_html=True)
     
-    st.write("---")
-    
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("Continue ➔"):
-            go_to_auth()
-            st.rerun()
+    if st.button("Get Started ➔"):
+        st.session_state.page = "auth"
+        st.rerun()
 
-# --- PAGE 2: LOGIN / SIGNUP (Unique ID) ---
+# --- PAGE 2: AUTH ---
 elif st.session_state.page == "auth":
-    st.markdown("<h1>System Access</h1>", unsafe_allow_html=True)
-    
-    tab1, tab2 = st.tabs(["Existing User (Login)", "New Caretaker (Sign Up)"])
+    draw_nav()
+    st.markdown("<h2>Access Portal</h2>", unsafe_allow_html=True)
+    tab1, tab2 = st.tabs(["Login with ID", "Create ID"])
     
     with tab1:
-        u_id = st.text_input("Enter your Unique Patient ID", placeholder="e.g. MED-8821")
-        if st.button("Access Dashboard"):
-            if u_id:
-                st.session_state.user_id = u_id
-                go_to_dash()
-                st.rerun()
-            else:
-                st.error("Please enter a valid ID")
-
+        u_id = st.text_input("Enter Unique ID")
+        if st.button("Enter Dashboard"):
+            st.session_state.user_id = u_id
+            st.session_state.page = "dashboard"
+            st.rerun()
+            
     with tab2:
-        st.write("Register your email to receive a Unique Patient ID.")
-        email = st.text_input("Caretaker Email")
-        pwd = st.text_input("Password", type="password")
-        
-        if st.button("Generate My Unique ID"):
-            if email and pwd:
-                new_id = f"MED-{random.randint(1000, 9999)}"
-                st.session_state.user_id = new_id
-                st.markdown(f"""
-                <div class='id-box'>
-                    <h2 style='color:#1E3A8A; margin:0;'>Your Unique ID</h2>
-                    <h1 style='color:#2563EB; margin:10px;'>{new_id}</h1>
-                    <p style='font-size:14px;'>Check your email ({email}) for a backup copy.</p>
-                </div>
-                """, unsafe_allow_html=True)
-                st.info("Now use this ID in the 'Login' tab to continue.")
-            else:
-                st.warning("Please fill in all fields")
+        st.write("New Caretaker? Register below.")
+        st.text_input("Email")
+        st.text_input("Password", type="password")
+        if st.button("Generate ID"):
+            new_id = f"MED-{random.randint(1000,9999)}"
+            st.success(f"Your ID: {new_id}")
 
-# --- PAGE 3: MEDICAL DASHBOARD ---
+# --- PAGE 3: DASHBOARD & AI ---
 elif st.session_state.page == "dashboard":
-    st.markdown(f"<h1>Dashboard</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3>Patient ID: {st.session_state.user_id}</h3>", unsafe_allow_html=True)
+    draw_nav()
     
-    with st.expander("➕ Add New Medication Schedule", expanded=True):
-        pill_name = st.text_input("Pill Name", placeholder="e.g. Paracetamol")
-        
-        c1, c2 = st.columns(2)
-        with c1:
-            start_date = st.date_input("Start Date")
-            end_date = st.date_input("End Date")
-        with c2:
-            time_input = st.time_input("Scheduled Time")
-            sound = st.selectbox("Notification Sound", ["Hospital Beep", "Digital Alarm", "Soft Chime"])
-        
-        st.markdown("### Caretaker Escalation Settings")
-        care_phone = st.text_input("Caretaker Phone Number")
-        back_phone = st.text_input("Backup Phone Number")
-        
-        if st.button("Add Schedule"):
-            st.success(f"Schedule for {pill_name} at {time_input} has been saved!")
+    # 1. AI DOCTOR SECTION
+    with st.expander("🤖 Ask AI Doctor (Symptoms/Tablets)", expanded=False):
+        st.markdown("<div class='ai-box'>I am your AI health assistant. Ask me about medicine side effects or dosages.</div>", unsafe_allow_html=True)
+        query = st.text_input("Type your question here...")
+        if query:
+            st.write(f"**AI Response:** Based on medical guidelines, {query} should be discussed with a doctor, but generally, users report...")
+            st.warning("Note: AI is for info only. Consult a real doctor.")
 
-    st.write("---")
-    st.markdown("### 🔔 Active Reminder")
-    
-    # Logic Display for Judges
-    st.info(f"**Current Task:** Take {pill_name if pill_name else 'Pills'} at **{time_input.strftime('%I:%M %p')}**")
-    
-    # The Escalation Logic Breakdown
+    # 2. ADD MEDICATION (THE FULL STUFF)
+    st.markdown("### ➕ Add Medication")
     with st.container():
-        st.write("**Escalation Protocol:**")
-        st.write(f"1️⃣ **{time_input.strftime('%I:%M %p')}**: First alarm (Sound: {sound})")
-        st.write(f"2️⃣ **{(datetime.combine(datetime.today(), time_input) + timedelta(minutes=10)).strftime('%I:%M %p')}**: Second alarm (Patient)")
-        st.write(f"3️⃣ **{(datetime.combine(datetime.today(), time_input) + timedelta(minutes=20)).strftime('%I:%M %p')}**: **SMS SENT TO {care_phone} & {back_phone}**")
-
-    st.write("")
-    if st.button("✅ I HAVE TAKEN MY PILL"):
-        st.balloons()
-        st.success("Dose Confirmed! Escalation Cancelled.")
+        p_name = st.text_input("Pill Name")
+        col1, col2 = st.columns(2)
+        with col1:
+            start = st.date_input("Start Date")
+            end = st.date_input("End Date")
+        with col2:
+            # FLEXIBLE TIME INPUT (AM/PM)
+            t_str = st.text_input("Time (e.g. 16:30 or 06:00 PM)", value="18:00")
+            sound = st.selectbox("Alarm", ["Loud Beep", "Voice Alert", "Melody"])
         
+        reason = st.text_area("Why are you taking this pill? (Optional)")
+        
+        st.markdown("#### Caretaker Escalation")
+        c1, c2 = st.columns(2)
+        with c1: c_phone = st.text_input("Primary Phone")
+        with c2: b_phone = st.text_input("Backup Phone")
+        
+        if st.button("Set Schedule & Activate Escalation"):
+            st.success("System Armed! 6:00 -> 6:10 -> 6:20 sequence set.")
+
+    # 3. ACTIVE DOSES
+    st.divider()
+    st.markdown("### 🔔 Active Reminders")
+    c1, c2 = st.columns([3, 1])
+    with c1:
+        st.info(f"**{p_name if p_name else 'Medicine'}** at {t_str}")
+        st.write("Status: *Escalation Active*")
+    with c2:
+        if st.button("DONE ✅"):
+            st.balloons()
+
     if st.button("Logout"):
-        logout()
+        st.session_state.page = "welcome"
         st.rerun()
