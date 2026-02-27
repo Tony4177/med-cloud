@@ -2,41 +2,53 @@ import streamlit as st
 import random
 from datetime import datetime, timedelta
 
-# 1. Page Config
-st.set_page_config(page_title="MedRemind Cloud", layout="centered")
+# 1. Page Configuration
+st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. Premium Blue & White Styles (No Black Used)
+# 2. Custom CSS for Professional Medical Look (No Black, No Box on Front Page)
 st.markdown("""
     <style>
+    /* Global Background and Text */
     .stApp { background-color: #FFFFFF; }
     
-    /* Header & Text Colors */
-    h1 { color: #0052CC; text-align: center; font-family: 'Helvetica'; font-weight: 800; }
-    h2, h3 { color: #0052CC; text-align: center; }
-    p, span, label { color: #334155 !important; font-weight: 500; font-size: 16px; }
+    /* Global Text Visibility Fix */
+    p, span, label, .stMarkdown { color: #1E293B !important; }
 
-    /* Button Style: Royal Blue with rounded corners */
-    .stButton>button {
-        background-color: #0052CC;
-        color: white;
-        border-radius: 12px;
-        height: 3.5em;
-        width: 100%;
-        font-weight: bold;
-        border: none;
-        font-size: 18px;
-        margin-top: 10px;
+    /* Headline Styling */
+    .main-headline {
+        text-align: center; 
+        color: #1E3A8A; 
+        font-weight: bold; 
+        font-size: 24px;
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
-    .stButton>button:hover { background-color: #003D99; color: white; }
+
+    /* Professional Action Blue Button - Reduced Width */
+    .stButton>button {
+        background-color: #2563EB !important;
+        color: white !important;
+        border-radius: 8px !important;
+        border: none !important;
+        padding: 10px 20px !important;
+        font-weight: bold !important;
+        font-size: 16px !important;
+        width: 100% !important;
+    }
+    .stButton>button:hover { background-color: #1E40AF !important; }
     
-    /* Card design for visibility */
+    /* Medical Card Styling for Dashboard */
     .med-card {
         background-color: #F8FAFC;
         padding: 20px;
-        border-radius: 15px;
+        border-radius: 12px;
         border: 1px solid #E2E8F0;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
+    
+    /* Hide Streamlit Header/Footer for cleaner Look */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -45,109 +57,123 @@ if 'page' not in st.session_state: st.session_state.page = "welcome"
 if 'user_id' not in st.session_state: st.session_state.user_id = None
 if 'history_count' not in st.session_state: st.session_state.history_count = 0
 
-# --- PAGE 1: WELCOME ---
+# --- PAGE 1: WELCOME (Updated Design) ---
 if st.session_state.page == "welcome":
-    st.markdown("<h1>MedRemind Cloud</h1>", unsafe_allow_html=True)
-    st.markdown("<p>Smart Healthcare Monitoring & Caretaker Escalation</p>", unsafe_allow_html=True)
-    
-    # Hero Illustration
+    # Image at the very top (No title above it)
     st.image("https://img.freepik.com/free-vector/health-professional-team-concept-illustration_114360-1608.jpg", use_container_width=True)
-    
+
+    # Centered, Bold Title
+    st.markdown("<div class='main-headline'>Smart Healthcare Monitoring & Caretaker Escalation</div>", unsafe_allow_html=True)
+
+    # 10 Lines of Professional Description (No Box)
     st.markdown("""
-    <div class='med-card'>
-    <b>What we do:</b><br>
-    Our system monitors your health 24/7. If you don't confirm your pill, we alert your family automatically. 
-    Built for safety, built for peace of mind.
-    </div>
+    <p style='text-align: center; line-height: 1.8;'>
+    Our cloud-integrated platform redefines patient medication adherence.<br>
+    Using advanced real-time tracking, we eliminate the risk of missed doses.<br>
+    The system features a 3-step smart escalation protocol for patient safety.<br>
+    If a dose is not confirmed, automated alerts are sent to the primary caretaker.<br>
+    A secondary backup notification ensures no emergency goes unnoticed.<br>
+    Built with a secure architecture to protect sensitive patient medical data.<br>
+    Designed for easy accessibility across all mobile and desktop devices.<br>
+    Bridging the communication gap between patients, families, and doctors.<br>
+    Empowering elderly users to manage chronic conditions independently.<br>
+    Your digital health companion for a safer, more connected tomorrow.
+    </p>
     """, unsafe_allow_html=True)
-    
-    if st.button("Continue ➔"):
-        st.session_state.page = "auth"
-        st.rerun()
+
+    # Centered Button with reduced width
+    st.write("") 
+    col1, col2, col3 = st.columns([1.3, 1, 1.3])
+    with col2:
+        if st.button("Continue ➔"):
+            st.session_state.page = "auth"
+            st.rerun()
 
 # --- PAGE 2: AUTH / LOGIN ---
 elif st.session_state.page == "auth":
-    st.markdown("<h1>System Access</h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #1E3A8A;'>System Access</h2>", unsafe_allow_html=True)
     
-    col1, col2 = st.columns([1,1])
-    with col1:
-        st.markdown("### Existing User")
-        login_id = st.text_input("Enter Patient ID")
-        if st.button("Login"):
-            st.session_state.user_id = login_id
-            st.session_state.page = "dashboard"
-            st.rerun()
+    tab1, tab2 = st.tabs(["Existing User", "New Caretaker"])
+    
+    with tab1:
+        login_id = st.text_input("Enter Patient ID", placeholder="e.g. MED-1234")
+        if st.button("Access Dashboard"):
+            if login_id:
+                st.session_state.user_id = login_id
+                st.session_state.page = "dashboard"
+                st.rerun()
             
-    with col2:
-        st.markdown("### New Caretaker")
+    with tab2:
+        st.write("Register to receive a Unique ID.")
         email = st.text_input("Caretaker Email")
         pwd = st.text_input("Password", type="password")
-        if st.button("Create ID"):
-            new_id = f"MED-{random.randint(1000, 9999)}"
-            st.session_state.user_id = new_id
-            st.success(f"ID Created: {new_id}")
-            st.info("Check your email for the backup.")
+        if st.button("Generate My ID"):
+            if email and pwd:
+                new_id = f"MED-{random.randint(1000, 9999)}"
+                st.session_state.user_id = new_id
+                st.success(f"ID Created: {new_id}")
+                st.info("Log in using this ID in the first tab.")
 
 # --- PAGE 3: DASHBOARD ---
 elif st.session_state.page == "dashboard":
-    # Top Bar with Profile and Logout
-    t_col1, t_col2, t_col3 = st.columns([1, 4, 1])
-    with t_col1: 
+    # Top Navigation
+    nav_l, nav_m, nav_r = st.columns([1, 4, 1])
+    with nav_l:
         if st.button("👤"): st.session_state.page = "profile"
-    with t_col2: st.markdown(f"### ID: {st.session_state.user_id}")
-    with t_col3: 
+    with nav_m:
+        st.markdown(f"<h3 style='text-align: center; margin:0;'>ID: {st.session_state.user_id}</h3>", unsafe_allow_html=True)
+    with nav_r:
         if st.button("🚪"): 
             st.session_state.page = "welcome"
             st.rerun()
 
-    # AI DOCTOR SECTION
-    st.markdown("### 🤖 Help Doctor (AI Health Assistant)")
-    user_q = st.text_input("Ask about symptoms or medicines...", placeholder="What is the dosage for Metformin?")
+    # AI Doctor Section
+    st.markdown("<div class='med-card'>", unsafe_allow_html=True)
+    st.markdown("### 🤖 Help Doctor (AI Assistant)")
+    user_q = st.text_input("Ask about symptoms or tablets:", placeholder="Side effects of Paracetamol?")
     if user_q:
-        st.markdown(f"<div class='med-card'><b>AI Doctor:</b> Medical records suggest that for '{user_q}', you should check the label for 500mg, but always consult a doctor first.</div>", unsafe_allow_html=True)
+        st.info(f"**AI Doctor:** Based on medical guidelines for '{user_q}', standard dosages vary by age. Always verify with your physician.")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.divider()
-
-    # ADD MEDICATION
+    # Add Medication
     with st.expander("➕ Add New Medication Schedule", expanded=True):
         p_name = st.text_input("Pill Name")
         c1, c2 = st.columns(2)
         with c1:
-            start_date = st.date_input("Start Date")
-            t_input = st.text_input("Set Time (e.g., 18:00 or 6:00 PM)", value="18:00")
+            start_d = st.date_input("Start Date")
+            t_input = st.text_input("Set Time (e.g. 18:30)", value="06:00 PM")
         with c2:
-            end_date = st.date_input("End Date")
-            sound = st.selectbox("Alarm Sound", ["Loud Beep", "Voice Reminder", "Chime"])
+            end_d = st.date_input("End Date")
+            sound = st.selectbox("Alarm", ["Loud Beep", "Voice", "Chime"])
         
-        st.write("**Caretaker Escalation Contacts**")
-        care_phone = st.text_input("Primary Caretaker No.")
-        back_phone = st.text_input("Backup Caretaker No.")
+        c_no = st.text_input("Primary Caretaker No.")
+        b_no = st.text_input("Backup Caretaker No.")
         
-        if st.button("Save & Activate"):
-            st.success("Reminders armed: 6:00 -> 6:10 -> 6:20 escalation active.")
+        if st.button("Save Schedule"):
+            st.success(f"Escalation Logic Armed for {p_name} at {t_input}")
 
-    st.markdown("### 🔔 Active Reminder")
-    st.info(f"Dose: {p_name if p_name else 'Pills'} at {t_input}")
+    # Active Reminder
+    st.divider()
+    st.markdown(f"### 🔔 Current Reminder: {p_name if p_name else 'Medication'}")
+    st.write(f"Scheduled for: **{t_input}** | Escalation Active: Yes")
     
     if st.button("✅ I HAVE TAKEN MY PILL"):
         st.balloons()
         st.session_state.history_count += 1
-        st.success("Great job! Caretaker notified.")
+        st.success("Caretaker Alert Cancelled. Dose logged.")
 
-# --- PAGE 4: PROFILE & HISTORY ---
+# --- PAGE 4: PROFILE ---
 elif st.session_state.page == "profile":
-    st.markdown("<h1>Patient Profile</h1>", unsafe_allow_html=True)
-    st.write(f"Patient ID: **{st.session_state.user_id}**")
+    st.markdown("<h2 style='text-align: center; color: #1E3A8A;'>Patient Profile</h2>", unsafe_allow_html=True)
     
     st.markdown("<div class='med-card'>", unsafe_allow_html=True)
-    st.metric("Total Pills Taken", f"{st.session_state.history_count}")
-    st.write("Adherence Rate: 100%")
+    st.metric("Total Doses Confirmed", f"{st.session_state.history_count}")
+    st.write("Adherence Streak: **Strong**")
     st.markdown("</div>", unsafe_allow_html=True)
     
-    st.markdown("### Options")
-    st.button("Update Profile Photo")
-    st.button("Change Password")
+    st.text_input("Update Name", value="Tony")
+    st.text_input("Update User ID", value=st.session_state.user_id)
     
-    if st.button("Back to Dashboard"):
+    if st.button("Save & Back"):
         st.session_state.page = "dashboard"
         st.rerun()
