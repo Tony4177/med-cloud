@@ -4,43 +4,47 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. Premium CSS (Light Blue Theme & Rounded UI)
+# 2. Premium CSS with your specific Blue (#0056D6)
 st.markdown("""
     <style>
     /* Global Background and Text */
     .stApp { background-color: #FFFFFF; }
     p, span, label, li { color: #1E3A8A !important; font-family: 'Segoe UI', sans-serif; }
 
-    /* Centered Headline at the top */
+    /* Headline at the top */
     .top-headline {
         text-align: center; color: #1E3A8A; font-weight: bold; font-size: 26px; margin-bottom: 10px;
     }
 
-    /* Light Blue Button - Less Width & Rounded Corners */
+    /* SPECIFIC BLUE BUTTONS (#0056D6) */
     .stButton>button {
-        background-color: #A8C7FA !important; /* Medical Light Blue */
-        color: #062E6F !important;
-        border-radius: 15px !important; 
+        background-color: #0056D6 !important; 
+        color: white !important;
+        border-radius: 12px !important; 
         border: none !important;
-        padding: 8px 25px !important;
+        padding: 10px 25px !important;
         font-weight: bold !important;
         width: auto !important; 
         min-width: 140px;
         display: block;
-        margin: 0 auto; /* Centers the button */
+        margin: 0 auto; 
+        transition: 0.3s;
     }
-    .stButton>button:hover { background-color: #D1E3FF !important; }
+    .stButton>button:hover { 
+        background-color: #0044ab !important; 
+        transform: translateY(-1px);
+    }
 
-    /* Transparent Buttons */
+    /* Custom styles for Links/Secondary buttons */
     .forgot-btn button, .create-btn button {
         background-color: transparent !important;
-        color: #2563EB !important;
+        color: #0056D6 !important;
         border: none !important;
-        text-align: left !important;
         padding: 0 !important;
+        font-weight: normal !important;
     }
 
-    /* Medical Input Box - Rounded */
+    /* Input Box Styling */
     .stTextInput>div>div>input {
         background-color: #F0F4F9 !important;
         color: #1E3A8A !important;
@@ -57,6 +61,7 @@ st.markdown("""
 # Initialize Session States
 if 'page' not in st.session_state: st.session_state.page = "welcome"
 if 'user_id' not in st.session_state: st.session_state.user_id = None
+if 'history_count' not in st.session_state: st.session_state.history_count = 0
 
 # --- PAGE 1: WELCOME ---
 if st.session_state.page == "welcome":
@@ -71,18 +76,15 @@ if st.session_state.page == "welcome":
 
     st.markdown("<p style='text-align: center;'>Thank you for choosing Med-Cloud!</p>", unsafe_allow_html=True)
 
-    # Continue Button - Light Blue & Centered in Middle
     st.write("")
     if st.button("Continue ➔"):
         st.session_state.page = "auth"
         st.rerun()
 
-# --- PAGE 2: AUTH (Light Blue Sign-In) ---
+# --- PAGE 2: AUTH (Sign-In) ---
 elif st.session_state.page == "auth":
     st.write("")
-    
     with st.container():
-        # Header Row: Logo & Project Name
         logo_col, title_col = st.columns([0.15, 0.85])
         with logo_col:
             st.image("https://cdn-icons-png.flaticon.com/512/2966/2966327.png", width=35)
@@ -91,28 +93,25 @@ elif st.session_state.page == "auth":
         
         st.markdown("<h3 style='margin-top:10px;'>Sign in</h3>", unsafe_allow_html=True)
         
-        # ID Box with Project Name Label and Example Placeholder
         st.markdown("<p style='margin-bottom:-10px; font-weight:bold;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: MED-1234", label_visibility="visible")
         
-        # Forgot ID Link
-        st.markdown("<div class='forgot-btn'>", unsafe_allow_html=True)
-        if st.button("Forgot ID?"):
-            st.toast("Please contact support.")
-        st.markdown("</div>", unsafe_allow_html=True)
+        col_forgot, col_empty = st.columns([1,1])
+        with col_forgot:
+            st.markdown("<div class='forgot-btn'>", unsafe_allow_html=True)
+            if st.button("Forgot ID?"):
+                st.toast("Contact support for ID recovery.")
+            st.markdown("</div>", unsafe_allow_html=True)
         
         st.write("")
-        
-        # Bottom Actions
         col_act1, col_act2 = st.columns([1, 1])
         with col_act1:
             st.markdown("<div class='create-btn'>", unsafe_allow_html=True)
             if st.button("Create account"):
-                st.info("Registration MED-XXXX")
+                st.info("New ID Generated: MED-9921")
             st.markdown("</div>", unsafe_allow_html=True)
             
         with col_act2:
-            # Light Blue Next button
             if st.button("Next"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
@@ -121,8 +120,29 @@ elif st.session_state.page == "auth":
                 else:
                     st.error("Please enter ID")
 
-    # Navigation back
-    st.write("")
-    if st.button("← Back", key="back_btn"):
+    if st.button("← Back"):
         st.session_state.page = "welcome"
         st.rerun()
+
+# --- PAGE 3: DASHBOARD ---
+elif st.session_state.page == "dashboard":
+    # Navigation Bar
+    n1, n2, n3 = st.columns([1, 4, 1])
+    with n1: 
+        if st.button("👤"): st.session_state.page = "profile"
+    with n2: st.markdown(f"<h3 style='text-align:center;'>Welcome, {st.session_state.user_id}</h3>", unsafe_allow_html=True)
+    with n3:
+        if st.button("☰"): st.toast("Menu opened")
+
+    # AI Doctor
+    st.markdown("### 🤖 AI Doctor Assistant")
+    q = st.text_input("Ask a medical question:", placeholder="What does this tablet do?")
+    if q:
+        st.info("AI Doctor: Please ensure you follow the prescribed dosage. Checking database...")
+
+    # Add Meds
+    with st.expander("Add Medication", expanded=True):
+        st.text_input("Medicine Name")
+        st.text_input("Time (16:30)", value="08:00 AM")
+        if st.button("Save Medication"):
+            st.success("Medication Added!")
