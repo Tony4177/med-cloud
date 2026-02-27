@@ -5,54 +5,64 @@ from datetime import time
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - ABSOLUTE OVERWRITE (Forces Light Mode & Hides Glitches)
+# 2. CSS - TOTAL VISIBILITY REPAIR
 st.markdown("""
     <style>
     /* 1. FORCE WHITE BACKGROUND EVERYWHERE */
-    .stApp, [data-testid="stExpander"], .streamlit-expanderContent, div[role="listbox"] {
+    .stApp, div[data-testid="stExpander"], .streamlit-expanderContent {
         background-color: #FFFFFF !important;
     }
 
-    /* 2. HIDE THE OVERLAPPING ARROW TEXT GLITCH */
-    .streamlit-expanderHeader p::after { content: none !important; }
-    .streamlit-expanderHeader svg { display: none !important; }
-    [data-testid="stExpander"] [data-testid="stMarkdownContainer"] p {
-        overflow: visible !important;
+    /* 2. FIX OVERLAPPING ARROW TEXT */
+    .streamlit-expanderHeader span, .streamlit-expanderHeader svg {
+        display: none !important; /* Hides the broken arrow_drop_down text */
+    }
+    .streamlit-expanderHeader {
+        background-color: #F0F7FF !important;
+        border: 1px solid #1A73E8 !important;
+        border-radius: 8px !important;
+        color: #1A73E8 !important;
+        font-weight: bold !important;
     }
 
-    /* 3. FIX BLACK BOXES & TEXT COLORS */
-    /* Input backgrounds to white, text to black */
-    input, select, textarea, div[data-baseweb="input"], .stNumberInput div {
+    /* 3. FIX DARK BOXES (Inputs, Selectors, Number Inputs) */
+    div[data-baseweb="input"], div[data-baseweb="select"], div[role="listbox"], .stNumberInput div {
         background-color: #FFFFFF !important;
         color: #000000 !important;
-        border: 2px solid #1A73E8 !important;
+        border: 1px solid #1A73E8 !important;
+    }
+    input {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
     }
     
-    /* Force labels and titles to Blue */
-    h1, h2, h3, h4, label, p, .stMarkdown {
+    /* 4. TEXT COLORS FOR VISIBILITY */
+    h1, h2, h3, h4, p, label, .stMarkdown {
         color: #1A73E8 !important;
-        font-weight: 500 !important;
     }
 
-    /* 4. BUTTONS (Blue Background, White Text) */
+    /* 5. PRIMARY BUTTONS (Blue with White Text) */
     div[data-testid="stButton"] button {
         background-color: #1A73E8 !important;
-        color: #FFFFFF !important;
+        color: white !important;
         border-radius: 20px !important;
         border: none !important;
+        width: auto !important;
     }
 
-    /* FORGOT ID (Specific for Page 2) */
+    /* FORGOT ID (Specific style for Page 2) */
     div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")) {
         background: transparent !important;
         color: #1A73E8 !important;
+        font-size: 11px !important;
         margin-top: 55px !important;
     }
 
-    /* HEADER */
+    /* HEADER STYLE */
     .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .profile-icon { width: 40px; height: 40px; background-color: #E8F0FE; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    
+    .profile-icon { width: 40px; height: 40px; background-color: #E8F0FE; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .line { width: 22px; height: 3px; background-color: #1A73E8; border-radius: 2px; margin: 3px 0; }
+
     header {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
@@ -84,16 +94,11 @@ elif st.session_state.page == "auth":
 
 # --- PAGE 3: MAIN DASHBOARD ---
 elif st.session_state.page == "dashboard":
-    # Custom Header
     st.markdown("""
         <div class="dashboard-header">
             <div class="profile-icon"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="30"></div>
             <h2 style="margin:0;">Doctor Help</h2>
-            <div style="cursor:pointer;">
-                <div style="width:22px; height:3px; background:#1A73E8; margin:3px;"></div>
-                <div style="width:22px; height:3px; background:#1A73E8; margin:3px;"></div>
-                <div style="width:22px; height:3px; background:#1A73E8; margin:3px;"></div>
-            </div>
+            <div class="menu-lines"><div class="line"></div><div class="line"></div><div class="line"></div></div>
         </div>
     """, unsafe_allow_html=True)
     
@@ -102,9 +107,9 @@ elif st.session_state.page == "dashboard":
     st.markdown("---")
     st.markdown("<h3>Pill Reminders</h3>", unsafe_allow_html=True)
     
-    # REMINDER FORM
+    # REMINDER FORM (Fixed white background and no broken icons)
     with st.expander("Add Medication Reminder", expanded=True):
-        med_name = st.text_input("Medicine Name", placeholder="Enter name here")
+        med_name = st.text_input("Medicine Name", placeholder="e.g. Insulin")
         
         c_date1, c_date2 = st.columns(2)
         with c_date1: s_date = st.date_input("Start Date")
@@ -131,9 +136,9 @@ elif st.session_state.page == "dashboard":
                 st.session_state.reminders.append({"med": med_name, "times": ", ".join(time_slots)})
                 st.success("Reminder Saved!")
 
-    # Display List
+    # Display Saved List
     for r in st.session_state.reminders:
-        st.info(f"💊 {r['med']} | Times: {r['times']}")
+        st.info(f"💊 {r['med']} at {r['times']}")
 
     if st.button("Sign Out"): st.session_state.page = "auth"; st.rerun()
 
@@ -145,4 +150,3 @@ elif st.session_state.page == "create_account":
     if 'generated_id' in st.session_state and st.session_state.generated_id:
         st.success(f"ID: {st.session_state.generated_id}")
         if st.button("Go to Sign In"): st.session_state.page = "auth"; st.rerun()
-
