@@ -1,7 +1,7 @@
 import streamlit as st
 
-# 1. Page Configuration
-st.set_set_page_config(page_title="Med-Cloud Pro", layout="centered")
+# 1. Page Configuration - FIXED TYPO HERE
+st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
 # 2. CSS - FORCE COLORS & DESIGN (LOCKED)
 st.markdown("""
@@ -48,17 +48,17 @@ st.markdown("""
         margin: 0 auto; 
     }
 
-    /* ID Box & Blinking Cursor */
+    /* ID Box & Blinking Cursor (Caret) */
     .stTextInput>div>div>input {
         background-color: #F8FAFC !important;
         color: #000000 !important;
         border: 1px solid #747775 !important;
         border-radius: 4px !important;
         padding: 12px !important;
-        caret-color: #1A73E8 !important; /* The blinking cursor line */
+        caret-color: #1A73E8 !important; /* Forces the blinking line to be blue */
     }
     
-    /* FORGOT ID: Smaller words, No Button, 1.3cm (50px) Gap */
+    /* FORGOT ID: Smaller words, No Button, 1.3cm Gap */
     div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")) {
         background: transparent !important;
         border: none !important;
@@ -67,7 +67,7 @@ st.markdown("""
         font-size: 11px !important; 
         box-shadow: none !important;
         width: auto !important;
-        margin-top: 50px !important; /* Exact 1.3cm gap */
+        margin-top: 50px !important; /* Exact 1.3cm gap from the box */
         text-align: left !important;
     }
 
@@ -87,8 +87,9 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Session State
+# Session State Initialization
 if 'page' not in st.session_state: st.session_state.page = "welcome"
+if 'user_id' not in st.session_state: st.session_state.user_id = None
 
 # --- PAGE 1: WELCOME ---
 if st.session_state.page == "welcome":
@@ -103,7 +104,7 @@ elif st.session_state.page == "auth":
     st.markdown("""<div class='stepper'><div class='step-dot'></div><div class='step-dot-off'></div><div class='step-dot-off'></div></div>""", unsafe_allow_html=True)
     
     with st.container():
-        # ICON AND NAME BESIDE EACH OTHER
+        # Header: Icon and Name on the same line
         st.markdown("""
             <div class='header-container'>
                 <img src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png' width='30'>
@@ -117,30 +118,32 @@ elif st.session_state.page == "auth":
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_main")
         
-        # FORGOT ID - Tiny, Blue words, 1.3cm gap
+        # Forgot ID - Text only, small, with 1.3cm gap
         if st.button("Forgot ID?", key="forgot_final"):
             st.session_state.page = "forgot_id"
             st.rerun()
 
         st.write("")
-        c1, c2 = st.columns([1, 1])
-        with c1:
+        col_left, col_right = st.columns([1, 1])
+        with col_left:
             if st.button("Create account", key="create_final"):
                 st.session_state.page = "create_account"
                 st.rerun()
-        with c2:
+        with col_right:
             if st.button("Next", key="next_final"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
                     st.session_state.page = "dashboard"
                     st.rerun()
+                else:
+                    st.error("Please enter your ID")
     
     st.write("")
     if st.button("← Back", key="back_final"):
         st.session_state.page = "welcome"
         st.rerun()
 
-# --- PLACEHOLDER PAGES ---
+# --- OTHER PAGES ---
 elif st.session_state.page == "dashboard":
     st.title("Main Dashboard")
     if st.button("Logout"): st.session_state.page = "auth"; st.rerun()
