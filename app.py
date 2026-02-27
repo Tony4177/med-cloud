@@ -114,3 +114,4 @@ with st.expander("Add Medication Reminder", expanded=True):
 # Sign Out at the bottom
 if st.button("Sign Out"):
     st.rerun()
+
