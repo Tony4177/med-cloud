@@ -4,7 +4,7 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - Lighter Blue & Precise Touching Position
+# 2. CSS - Lighter Blue & Precise "Touching" Position Below Box
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
@@ -63,16 +63,14 @@ st.markdown("""
         font-size: 16px !important;
     }
 
-    /* Forget ID - Positioned to touch the box exactly */
+    /* Forget ID - Positioned BELOW the box but touching the edge */
     .forgot-link {
         color: #1A73E8 !important;
         font-size: 13px !important;
         font-weight: 500 !important;
-        margin-top: -34px; /* Move up until it touches the box */
+        margin-top: -30px; /* Pulls text UP from its original position below the box */
         display: block;
         text-align: left;
-        position: relative;
-        z-index: 10;
     }
     
     header {visibility: hidden;}
@@ -117,7 +115,7 @@ elif st.session_state.page == "auth":
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", label_visibility="visible")
         
-        # This is the line that now "touches" the box
+        # This sits below the text_input in the code, but the CSS pulls it up to touch the box
         st.markdown("<span class='forgot-link'>Forgot ID?</span>", unsafe_allow_html=True)
         
         st.write("")
