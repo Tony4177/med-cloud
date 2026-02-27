@@ -4,7 +4,7 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - Final Layout Fixes
+# 2. CSS - Lighter Blue & Precise Touching Position
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
@@ -42,15 +42,16 @@ st.markdown("""
         border: none !important;
         padding: 8px 16px !important;
         font-weight: 500 !important;
+        font-size: 14px !important;
         width: auto !important;
         min-width: 120px;
         display: block;
-        margin: 0 auto; /* Keeps button in middle */
+        margin: 0 auto; 
     }
 
-    /* Input Box Placeholder Visibility Fix */
+    /* Input Box Placeholder Visibility */
     ::placeholder {
-        color: #4A5568 !important; /* Darker grey/blue for naked eye visibility */
+        color: #4A5568 !important; 
         opacity: 1; 
     }
     .stTextInput>div>div>input {
@@ -62,14 +63,16 @@ st.markdown("""
         font-size: 16px !important;
     }
 
-    /* Forget ID - Positioned exactly below box */
+    /* Forget ID - Positioned to touch the box exactly */
     .forgot-link {
         color: #1A73E8 !important;
         font-size: 13px !important;
         font-weight: 500 !important;
-        margin-top: -25px; /* Pulls it up to sit exactly under the box */
+        margin-top: -34px; /* Move up until it touches the box */
         display: block;
         text-align: left;
+        position: relative;
+        z-index: 10;
     }
     
     header {visibility: hidden;}
@@ -92,22 +95,18 @@ if st.session_state.page == "welcome":
     with col_b:
         st.markdown("**Main Advantages:**\n* Secure Unique IDs.\n* Built-in AI Doctor.")
 
-    # Adjusted "Thank you" to middle
     st.markdown("<p class='center-text'>Thank you for choosing Med-Cloud to manage your health journey!</p>", unsafe_allow_html=True)
 
     st.write("")
-    # Continue button in middle
     if st.button("Continue ➔"):
         st.session_state.page = "auth"
         st.rerun()
 
 # --- PAGE 2: AUTH (Sign-In) ---
 elif st.session_state.page == "auth":
-    # Progress Stepper
     st.markdown("""<div class='stepper'><div class='step-dot'></div><div class='step-dot-off'></div><div class='step-dot-off'></div></div>""", unsafe_allow_html=True)
     
     with st.container():
-        # Project Title
         l_col, t_col = st.columns([0.1, 0.9])
         with l_col: st.image("https://cdn-icons-png.flaticon.com/512/2966/2966327.png", width=30)
         with t_col: st.markdown("<h2 style='margin:0; color:#1E3A8A; font-size:22px;'>Med-Cloud Pro</h2>", unsafe_allow_html=True)
@@ -115,16 +114,14 @@ elif st.session_state.page == "auth":
         st.markdown("<h3 style='margin-top:10px; font-size:24px;'>Sign in</h3>", unsafe_allow_html=True)
         st.markdown("<p style='margin-top:-15px; font-size:14px; color:#5F6368 !important;'>Access your secure health dashboard</p>", unsafe_allow_html=True)
         
-        # ID Input with high-visibility example
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", label_visibility="visible")
         
-        # Forget ID exactly below big box
+        # This is the line that now "touches" the box
         st.markdown("<span class='forgot-link'>Forgot ID?</span>", unsafe_allow_html=True)
         
         st.write("")
         
-        # Create and Next (Same line)
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
             if st.button("Create account", key="create"): st.info("ID: MED-XXXX")
@@ -135,7 +132,6 @@ elif st.session_state.page == "auth":
                     st.session_state.page = "dashboard"
                     st.rerun()
 
-    # Removed the encryption/security note as requested
     st.write("")
     if st.button("← Back"):
         st.session_state.page = "welcome"
