@@ -141,3 +141,4 @@ elif st.session_state.page == "create_account":
         st.session_state.page = "auth"
         st.session_state.generated_id = None
         st.rerun()
+
