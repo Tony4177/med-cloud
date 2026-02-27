@@ -4,7 +4,7 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - Lighter Blue & Precise "Touching" Position Below Box
+# 2. CSS - Final Layout with 2cm distance
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
@@ -63,12 +63,12 @@ st.markdown("""
         font-size: 16px !important;
     }
 
-    /* Forget ID - Positioned BELOW the box but touching the edge */
+    /* Forget ID - Positioned 2cm (approx 75px) below the box */
     .forgot-link {
         color: #1A73E8 !important;
         font-size: 13px !important;
         font-weight: 500 !important;
-        margin-top: -30px; /* Pulls text UP from its original position below the box */
+        margin-top: 15px; /* Added positive margin for distance */
         display: block;
         text-align: left;
     }
@@ -115,15 +115,16 @@ elif st.session_state.page == "auth":
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", label_visibility="visible")
         
-        # This sits below the text_input in the code, but the CSS pulls it up to touch the box
+        # Positioned BELOW with distance
         st.markdown("<span class='forgot-link'>Forgot ID?</span>", unsafe_allow_html=True)
         
         st.write("")
+        st.write("") # Extra spacer to account for the distance
         
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
             if st.button("Create account", key="create"): st.info("ID: MED-XXXX")
-        with c_act2:
+        with col_act2:
             if st.button("Next", key="next"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
