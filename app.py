@@ -1,25 +1,19 @@
 import streamlit as st
 
-# 1. Page Configuration - FIXED TYPO HERE
+# 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - FORCE COLORS & DESIGN (LOCKED)
+# 2. CSS - FORCE LIGHT BLUE & DESIGN (LOCKED)
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
     
-    /* FORCE DARK BLUE ON TITLES */
-    h1, h2, h3, .top-headline {
-        color: #1E3A8A !important;
+    /* FORCE LIGHT BLUE ON TITLES AND LABELS */
+    h1, h2, h3, .top-headline, p, span, label, li {
+        color: #1A73E8 !important; /* Reverted to Light Blue */
         font-family: 'Segoe UI', sans-serif !important;
     }
     
-    /* FORCE BLUE ON LABELS */
-    p, span, label, li { 
-        color: #1E3A8A !important; 
-        font-family: 'Segoe UI', sans-serif !important; 
-    }
-
     .stepper { display: flex; justify-content: center; margin-bottom: 25px; }
     .step-dot { height: 6px; width: 35px; background-color: #1A73E8; border-radius: 4px; margin: 0 4px; }
     .step-dot-off { height: 6px; width: 35px; background-color: #E2E8F0; border-radius: 4px; margin: 0 4px; }
@@ -55,7 +49,7 @@ st.markdown("""
         border: 1px solid #747775 !important;
         border-radius: 4px !important;
         padding: 12px !important;
-        caret-color: #1A73E8 !important; /* Forces the blinking line to be blue */
+        caret-color: #1A73E8 !important; /* Blue blinking line */
     }
     
     /* FORGOT ID: Smaller words, No Button, 1.3cm Gap */
@@ -67,11 +61,11 @@ st.markdown("""
         font-size: 11px !important; 
         box-shadow: none !important;
         width: auto !important;
-        margin-top: 50px !important; /* Exact 1.3cm gap from the box */
+        margin-top: 50px !important; /* 1.3cm gap */
         text-align: left !important;
     }
 
-    /* Create account as a text link */
+    /* Create account text link */
     div[data-testid="stButton"] button:has(div p:contains("Create account")) {
         background: transparent !important;
         border: none !important;
@@ -87,7 +81,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Session State Initialization
+# Session State
 if 'page' not in st.session_state: st.session_state.page = "welcome"
 if 'user_id' not in st.session_state: st.session_state.user_id = None
 
@@ -104,11 +98,10 @@ elif st.session_state.page == "auth":
     st.markdown("""<div class='stepper'><div class='step-dot'></div><div class='step-dot-off'></div><div class='step-dot-off'></div></div>""", unsafe_allow_html=True)
     
     with st.container():
-        # Header: Icon and Name on the same line
         st.markdown("""
             <div class='header-container'>
                 <img src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png' width='30'>
-                <h2 style='color:#1E3A8A;'>Med-Cloud Pro</h2>
+                <h2>Med-Cloud Pro</h2>
             </div>
         """, unsafe_allow_html=True)
         
@@ -118,7 +111,6 @@ elif st.session_state.page == "auth":
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_main")
         
-        # Forgot ID - Text only, small, with 1.3cm gap
         if st.button("Forgot ID?", key="forgot_final"):
             st.session_state.page = "forgot_id"
             st.rerun()
@@ -136,7 +128,7 @@ elif st.session_state.page == "auth":
                     st.session_state.page = "dashboard"
                     st.rerun()
                 else:
-                    st.error("Please enter your ID")
+                    st.error("Please enter ID")
     
     st.write("")
     if st.button("← Back", key="back_final"):
@@ -145,7 +137,7 @@ elif st.session_state.page == "auth":
 
 # --- OTHER PAGES ---
 elif st.session_state.page == "dashboard":
-    st.title("Main Dashboard")
+    st.title("Dashboard")
     if st.button("Logout"): st.session_state.page = "auth"; st.rerun()
 
 elif st.session_state.page == "forgot_id":
