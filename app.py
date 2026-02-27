@@ -4,53 +4,51 @@ from datetime import time
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. THE FORCE COMMANDS (CSS) - FIXES THE OVERLAP GLOBALLY
+# 2. THE GLOBAL OVERLAP KILLER & STYLE (FORCED IMAGE 2 LOOK)
 st.markdown("""
     <style>
-    /* FORCE THE BACKGROUND WHITE */
+    /* 1. FORCE THE LIGHT BACKGROUND */
     .stApp { background-color: #FFFFFF !important; }
-
-    /* THE GLOBAL OVERLAP KILLER - HIDES "arrow_drop_down" ON ALL BARS & BOXES */
+    
+    /* 2. THE GLOBAL OVERLAP KILLER - HIDES "arrow_drop_down" EVERYWHERE */
     span:contains("arrow_"), 
     .streamlit-expanderHeader span, 
     .streamlit-expanderHeader svg,
-    [data-testid="stExpander"] svg,
-    div[data-baseweb="icon"],
+    [data-testid="stExpander"] svg, 
+    div[data-baseweb="icon"], 
     div[data-baseweb="select"] svg {
-        display: none !important;
-        visibility: hidden !important;
-        width: 0px !important;
+        display: none !important; 
+        visibility: hidden !important; 
+        width: 0px !important; 
         height: 0px !important;
         content: "" !important;
     }
     
-    /* STYLE THE HEADER BAR (EXACT MATCH FOR IMAGE 2) */
-    .streamlit-expanderHeader {
+    /* 3. STYLE THE HEADER BAR (Mirroring Image 2) */
+    .streamlit-expanderHeader { 
         background-color: #1E1E2E !important; 
-        border-radius: 4px !important;
-        padding: 10px !important;
-        border: none !important;
+        border-radius: 4px !important; 
+        padding: 10px !important; 
     }
-    .streamlit-expanderHeader p {
+    .streamlit-expanderHeader p { 
         color: #1A73E8 !important; 
-        font-weight: 600 !important;
-        font-size: 16px !important;
+        font-weight: 600 !important; 
     }
 
-    /* FORCE BOX VISIBILITY (WHITE BOX + BLUE BORDER) */
+    /* 4. FIX BOX VISIBILITY (White background, Blue borders) */
     input, [data-baseweb="input"], [data-baseweb="select"], .stNumberInput div {
-        background-color: #FFFFFF !important;
-        color: #000000 !important;
+        background-color: #FFFFFF !important; 
+        color: #000000 !important; 
         border: 2px solid #1A73E8 !important;
     }
 
-    /* FORCE TEXT COLORS TO STAND OUT */
+    /* 5. TITLES AND LABELS (High Visibility Blue) */
     h1, h2, h3, label, p, .stMarkdownContainer p { 
         color: #1A73E8 !important; 
-        font-weight: 600 !important;
+        font-weight: 600 !important; 
     }
 
-    /* BUTTON STYLE */
+    /* 6. BUTTON STYLE */
     div[data-testid="stButton"] button {
         background-color: #1A73E8 !important;
         color: white !important;
@@ -64,56 +62,69 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- DASHBOARD LAYOUT (MIRRORING IMAGE 2) ---
+# --- SESSION STATE (THE LOCKING SYSTEM) ---
+if 'page' not in st.session_state: 
+    st.session_state.page = "welcome"
+if 'current_user' not in st.session_state: 
+    st.session_state.current_user = None
 
-# Centered Title
-st.markdown("<h1 style='text-align:center;'>Doctor Help</h1>", unsafe_allow_html=True)
-st.markdown("### Patient Dashboard: wewfwef") 
-st.markdown("---")
-
-st.markdown("## Pill Reminders")
-
-# THE EXPANDER (All overlapping text is hidden by the CSS above)
-with st.expander("Add Medication Reminder", expanded=True):
-    # Medicine Name Input
-    st.text_input("Medicine Name", placeholder="frgreg") 
+# --- PAGE 1: WELCOME SCREEN (IMAGE & CONTINUE) ---
+if st.session_state.page == "welcome":
+    st.markdown("<h1 style='text-align:center;'>Smart Healthcare Monitoring</h1>", unsafe_allow_html=True)
+    st.image("https://img.freepik.com/free-vector/health-professional-team-concept-illustration_114360-1608.jpg")
     
-    # DATE GRID (Side-by-side)
-    col1, col2 = st.columns(2)
-    with col1: 
-        st.date_input("Start Date")
-    with col2: 
-        st.date_input("End Date")
+    if st.button("Continue ➔"): 
+        st.session_state.page = "auth"
+        st.rerun()
+
+# --- PAGE 2: SIGN IN / SIGN UP ---
+elif st.session_state.page == "auth":
+    st.markdown("### Sign in")
+    user_id = st.text_input("Med-Cloud ID", placeholder="ex: MED-1234")
     
-    # DOSAGE (Matches Image 2 +/- buttons)
-    dosage = st.number_input("Dosage Per Day", min_value=1, max_value=8, value=4)
+    col_btn1, col_btn2 = st.columns([1, 1])
+    with col_btn1:
+        if st.button("Create account"):
+            st.info("Directing to Account Creation...")
+    with col_btn2:
+        if st.button("Next"):
+            if user_id:
+                st.session_state.current_user = user_id
+                st.session_state.page = "dashboard"
+                st.rerun()
+
+# --- PAGE 3: DASHBOARD (MIRRORING IMAGE 2 - NO OVERLAP) ---
+elif st.session_state.page == "dashboard":
+    st.markdown("<h1 style='text-align:center;'>Doctor Help</h1>", unsafe_allow_html=True)
+    st.markdown(f"### Patient Dashboard: {st.session_state.current_user}")
+    st.markdown("---")
     
-    st.write("Set Times:")
-    
-    # DYNAMIC TIME SLOTS (2-Column Grid for Dose 1, 2, 3, 4)
-    t_cols = st.columns(2)
-    for i in range(int(dosage)):
-        with t_cols[i % 2]:
-            # Setting default times like your screenshot (07:30, 12:00, 16:00, 20:00)
-            d_times = [time(7, 30), time(12, 0), time(16, 0), time(20, 0)]
-            val = d_times[i] if i < 4 else time(10, 0)
-            st.time_input(f"Dose {i+1}", value=val, key=f"dose_grid_{i}")
+    with st.expander("Add Medication Reminder", expanded=True):
+        st.text_input("Medicine Name", placeholder="frgreg")
+        
+        # Grid layout for dates
+        c1, c2 = st.columns(2)
+        with c1: st.date_input("Start Date")
+        with c2: st.date_input("End Date")
+        
+        dosage = st.number_input("Dosage Per Day", min_value=1, max_value=8, value=4)
+        
+        st.write("Set Times:")
+        # 2-Column Grid for Doses (Dose 1, Dose 2, etc.)
+        t_cols = st.columns(2)
+        for i in range(int(dosage)):
+            with t_cols[i % 2]:
+                d_times = [time(7, 30), time(12, 0), time(16, 0), time(20, 0)]
+                st.time_input(f"Dose {i+1}", value=d_times[i] if i < 4 else time(10,0), key=f"d_input_{i}")
 
-    # CARETAKER SECTION (Matches Image 2 bottom)
-    st.markdown("### Caretaker Details")
-    st.text_input("Name", key="caretaker_name_input")
-    
-    cp1, cp2 = st.columns(2)
-    with cp1: 
-        st.text_input("Primary Phone", key="phone_primary")
-    with cp2: 
-        st.text_input("Secondary Phone", key="phone_secondary")
+        st.markdown("### Caretaker Details")
+        st.text_input("Caretaker Name")
+        cp1, cp2 = st.columns(2)
+        with cp1: st.text_input("Primary Phone")
+        with cp2: st.text_input("Secondary Phone")
+        st.button("Set Reminder")
 
-    st.button("Set Reminder")
-
-# Sign Out at the bottom
-if st.button("Sign Out"):
-    st.rerun()
-
-
-
+    if st.button("Log Out"):
+        st.session_state.page = "welcome"
+        st.session_state.current_user = None
+        st.rerun()
