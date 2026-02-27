@@ -4,7 +4,7 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - Version 2.5 (LOCKED DESIGN)
+# 2. CSS - Version 2.5 (LOCKED DESIGN + BLINKING CURSOR)
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; }
@@ -18,11 +18,11 @@ st.markdown("""
 
     .top-headline { text-align: center; color: #1E3A8A; font-weight: bold; font-size: 26px; margin-bottom: 10px; }
 
-    /* Main Action Buttons (Create/Next/Continue) */
+    /* Main Action Buttons (Next/Continue) */
     .stButton>button {
         background-color: #1A73E8 !important;
         color: white !important;
-        border-radius: 20px !important; /* Rounded like Google Next button */
+        border-radius: 20px !important;
         border: none !important;
         padding: 10px 24px !important;
         font-weight: 500 !important;
@@ -42,27 +42,28 @@ st.markdown("""
         border-radius: 4px !important;
         padding: 12px !important;
         font-size: 16px !important;
-        caret-color: #1A73E8 !important; /* Blinking line color */
+        caret-color: #1A73E8 !important; /* This is the blinking line */
     }
     
-    /* GOOGLE STYLE TEXT LINK (No button background/border) */
-    .stButton>button[kind="secondary"] {
+    /* GOOGLE STYLE TEXT LINK FOR FORGOT ID & CREATE ACCOUNT */
+    /* Target buttons with specific keys to strip their styling */
+    div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")),
+    div[data-testid="stButton"] button:has(div p:contains("Create account")) {
         background: none !important;
         border: none !important;
         color: #1A73E8 !important;
-        text-transform: none !important;
         padding: 0 !important;
         font-size: 14px !important;
         font-weight: 500 !important;
-        width: auto !important;
-        min-width: 0 !important;
         box-shadow: none !important;
-        margin-top: -15px !important;
+        width: auto !important;
+        display: inline-block !important;
         text-align: left !important;
     }
-    .stButton>button[kind="secondary"]:hover {
-        background: none !important;
-        text-decoration: underline !important;
+
+    /* Special position for Forgot ID to be tight under the box */
+    div[data-testid="stButton"] button:has(div p:contains("Forgot ID?")) {
+        margin-top: -30px !important;
     }
 
     header {visibility: hidden;}
@@ -103,21 +104,23 @@ elif st.session_state.page == "auth":
         
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         
-        # BIG BOX - Cursor Enabled
+        # BIG BOX - With Blinking line
         user_id_input = st.text_input("", placeholder="ex: (MED-1234)", key="input_field_main")
         
-        # FORGOT ID - GOOGLE STYLE PLAIN TEXT (Secondary kind removes button styling)
-        if st.button("Forgot ID?", key="forgot_text", kind="secondary"):
+        # FORGOT ID - Styled via CSS to be words only
+        if st.button("Forgot ID?", key="forgot_text_link"):
             st.session_state.page = "forgot_id"
             st.rerun()
 
         st.write("")
         c_act1, c_act2 = st.columns([1, 1])
         with c_act1:
-            if st.button("Create account", key="create_btn", kind="secondary"):
+            # CREATE ACCOUNT - Also styled via CSS to be words only
+            if st.button("Create account", key="create_btn"):
                 st.session_state.page = "create_account"
                 st.rerun()
         with c_act2:
+            # NEXT - Stays a pill-shaped blue button
             if st.button("Next", key="next_btn"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
