@@ -4,65 +4,61 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. CSS - Precise Adjustments Based on Your Feedback
+# 2. CSS - Lighter Blue (#1A73E8) & Precise Spacing
 st.markdown("""
     <style>
-    /* Global Background */
     .stApp { background-color: #FFFFFF; }
-    
-    /* Global Text Visibility - Navy for contrast */
     p, span, label, li { color: #1E3A8A !important; font-family: 'Segoe UI', sans-serif; }
 
-    /* Centered Headline */
+    /* Progress Stepper */
+    .stepper {
+        display: flex; justify-content: center; margin-bottom: 25px;
+    }
+    .step-dot {
+        height: 6px; width: 35px; background-color: #1A73E8; border-radius: 4px; margin: 0 4px;
+    }
+    .step-dot-off {
+        height: 6px; width: 35px; background-color: #E2E8F0; border-radius: 4px; margin: 0 4px;
+    }
+
+    /* Headline */
     .top-headline {
         text-align: center; color: #1E3A8A; font-weight: bold; font-size: 26px; margin-bottom: 10px;
     }
 
-    /* SPECIFIC LIGHTER BLUE BUTTON (#1A73E8) - Reduced Width */
+    /* Lighter Blue Buttons - Thinner Width */
     .stButton>button {
-        background-color: #1A73E8 !important; /* Slightly lighter than #0056D6 */
+        background-color: #1A73E8 !important;
         color: white !important;
-        border-radius: 8px !important; 
+        border-radius: 8px !important;
         border: none !important;
         padding: 8px 16px !important;
         font-weight: 500 !important;
-        font-size: 14px !important;
-        width: auto !important; 
-        min-width: 100px; /* Thinner width */
+        width: auto !important;
+        min-width: 110px;
         display: block;
         margin: 0 auto; 
     }
 
-    /* Forget ID - Not a button, just a small clickable link style */
+    /* Input Box Visibility (Black text for naked eye) */
+    .stTextInput>div>div>input {
+        background-color: #F8FAFC !important;
+        color: #000000 !important;
+        border: 1px solid #747775 !important;
+        border-radius: 6px !important;
+        padding: 10px !important;
+        font-size: 16px !important;
+    }
+
+    /* Forget ID - Tight spacing */
     .forgot-link {
         color: #1A73E8 !important;
         font-size: 13px !important;
         font-weight: 500 !important;
-        text-decoration: none;
-        cursor: pointer;
-        margin-top: -15px;
-        margin-bottom: 20px;
+        margin-top: -22px; /* Tightened space significantly */
         display: inline-block;
     }
-
-    /* Input Box Visibility Fix - Dark Text for Naked Eye */
-    .stTextInput>div>div>input {
-        background-color: #F8FAFC !important;
-        color: #000000 !important; /* Pure black text for high visibility */
-        border: 1px solid #747775 !important;
-        border-radius: 6px !important;
-        padding: 10px !important;
-        font-size: 16px !important; /* Larger font */
-    }
     
-    /* Row Alignment for Create and Next */
-    .auth-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-    }
-
     header {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
@@ -85,52 +81,49 @@ if st.session_state.page == "welcome":
 
     st.markdown("<p style='text-align: center;'>Thank you for choosing Med-Cloud!</p>", unsafe_allow_html=True)
 
-    # Continue Button - Centered, Thinner, Lighter Blue
     st.write("")
+    # Centered Continue Button
     if st.button("Continue ➔"):
         st.session_state.page = "auth"
         st.rerun()
 
 # --- PAGE 2: AUTH (Sign-In) ---
 elif st.session_state.page == "auth":
-    st.write("")
+    # 1. Progress Stepper (Visual improvement)
+    st.markdown("""<div class='stepper'><div class='step-dot'></div><div class='step-dot-off'></div><div class='step-dot-off'></div></div>""", unsafe_allow_html=True)
+    
     with st.container():
-        # Header Row
-        logo_col, title_col = st.columns([0.1, 0.9])
-        with logo_col:
-            st.image("https://cdn-icons-png.flaticon.com/512/2966/2966327.png", width=30)
-        with title_col:
-            st.markdown("<h2 style='margin:0; padding-top:2px; color:#1E3A8A; font-size:22px;'>Med-Cloud Pro</h2>", unsafe_allow_html=True)
+        # Logo and Title
+        l_col, t_col = st.columns([0.1, 0.9])
+        with l_col: st.image("https://cdn-icons-png.flaticon.com/512/2966/2966327.png", width=30)
+        with t_col: st.markdown("<h2 style='margin:0; color:#1E3A8A; font-size:22px;'>Med-Cloud Pro</h2>", unsafe_allow_html=True)
         
-        st.markdown("<h3 style='margin-top:15px; text-align:left; font-size:24px;'>Sign in</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='margin-top:10px; font-size:24px;'>Sign in</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='margin-top:-15px; font-size:14px; color:#5F6368 !important;'>Access your secure health dashboard</p>", unsafe_allow_html=True)
         
-        # ID Box Label
+        # ID Input
         st.markdown("<p style='margin-bottom:-15px; font-weight:500; font-size:14px;'>Med-Cloud ID</p>", unsafe_allow_html=True)
         user_id_input = st.text_input("", placeholder="ex: MED-1234", label_visibility="visible")
         
-        # Forget ID - Small link below big box
+        # 2. Forget ID (Decreased space)
         st.markdown("<span class='forgot-link'>Forgot ID?</span>", unsafe_allow_html=True)
         
         st.write("")
         
-        # Create and Next in the SAME LINE
-        col_act1, col_act2 = st.columns([1, 1])
-        with col_act1:
-            # Create account styled as a text-link but functional
-            if st.button("Create account", key="create_acc"):
-                st.info("New ID: MED-8829")
-        with col_act2:
-            # Next Button aligned to the right
-            if st.button("Next", key="next_step"):
+        # Create and Next (Same line)
+        c_act1, c_act2 = st.columns([1, 1])
+        with c_act1:
+            if st.button("Create account", key="create"): st.info("ID: MED-7721")
+        with c_act2:
+            if st.button("Next", key="next"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
                     st.session_state.page = "dashboard"
                     st.rerun()
-                else:
-                    st.error("Please enter ID")
 
-    # Simple Back link
-    st.write("")
+    # 3. Security Note (Visual improvement)
+    st.markdown("<div style='text-align:center; margin-top:30px;'><p style='font-size:12px; color:grey !important;'>🔒 Encrypted Medical-Grade Connection</p></div>", unsafe_allow_html=True)
+
     if st.button("← Back"):
         st.session_state.page = "welcome"
         st.rerun()
