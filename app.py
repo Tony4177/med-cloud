@@ -4,59 +4,67 @@ import random
 # 1. Page Configuration
 st.set_page_config(page_title="Med-Cloud Pro", layout="centered")
 
-# 2. Premium CSS (Medical Google-Style Interface)
+# 2. Premium CSS (Medical Theme - No Black, Rounded Corners)
 st.markdown("""
     <style>
+    /* Global Background and Text */
     .stApp { background-color: #FFFFFF; }
-    
-    /* Navigation/Global Text */
-    p, span, label, li { color: #3C4043 !important; font-family: 'Roboto', arial, sans-serif; }
+    p, span, label, li { color: #1E3A8A !important; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-    /* Sign-In Card Container */
-    .signin-card {
-        background-color: #000000;
-        padding: 40px;
-        border-radius: 28px;
-        color: white !important;
-        margin: auto;
-        max-width: 450px;
-    }
-
-    /* Headlines */
+    /* Centered Headline at the top */
     .top-headline {
         text-align: center; color: #1E3A8A; font-weight: bold; font-size: 26px; margin-bottom: 10px;
     }
-    .auth-headline {
-        font-size: 24px; color: white !important; margin-bottom: 8px;
+
+    /* Primary Blue Button - Less Width & Rounded Corners */
+    .stButton>button {
+        background-color: #2563EB !important;
+        color: white !important;
+        border-radius: 12px !important; /* Rounded corners */
+        border: none !important;
+        padding: 8px 20px !important;
+        font-weight: bold !important;
+        width: auto !important; /* Less width */
+        min-width: 120px;
+        display: block;
+        margin: 0 auto;
+    }
+    .stButton>button:hover { background-color: #1E40AF !important; }
+
+    /* Transparent Buttons for 'Forgot ID' and 'Create Account' */
+    .forgot-btn button, .create-btn button {
+        background-color: transparent !important;
+        color: #2563EB !important;
+        border: none !important;
+        text-decoration: none !important;
+        font-weight: normal !important;
+        padding: 0 !important;
+        box-shadow: none !important;
     }
 
-    /* Google-style Next Button */
-    .stButton>button {
-        background-color: #A8C7FA !important; /* Soft medical blue from your image */
-        color: #062E6F !important;
-        border-radius: 20px !important;
-        border: none !important;
-        padding: 10px 24px !important;
-        font-weight: bold !important;
-        float: right;
+    /* Medical Input Box - Rounded with Blue Border */
+    .stTextInput>div>div>input {
+        background-color: #F8FAFC !important;
+        color: #1E3A8A !important;
+        border: 2px solid #E2E8F0 !important;
+        border-radius: 12px !important; /* Rounded corners */
+        padding: 10px !important;
+    }
+    .stTextInput>div>div>input:focus {
+        border-color: #2563EB !important;
+    }
+
+    /* Custom spacing for Sign-In Interface */
+    .auth-container {
+        padding: 30px;
+        border: 1px solid #E2E8F0;
+        border-radius: 20px;
+        margin-top: 20px;
     }
     
-    /* Transparent Button for 'Create Account' */
-    div[data-testid="stHorizontalBlock"] div:nth-child(1) button {
-        background-color: transparent !important;
-        color: #A8C7FA !important;
-        border: none !important;
-        text-align: left !important;
-        float: none;
-    }
-
-    /* Input Box Styling */
-    .stTextInput>div>div>input {
-        background-color: transparent !important;
-        color: white !important;
-        border: 1px solid #9AA0A6 !important;
-        border-radius: 4px !important;
-    }
+    /* Hide Streamlit components */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -77,45 +85,53 @@ if st.session_state.page == "welcome":
 
     st.markdown("<p style='text-align: center;'>Thank you for choosing Med-Cloud!</p>", unsafe_allow_html=True)
 
-    c1, c2, c3 = st.columns([1.5, 1, 1.5])
-    with c2:
-        if st.button("Continue ➔"):
-            st.session_state.page = "auth"
-            st.rerun()
-
-# --- PAGE 2: AUTH (Medical "Sign-In" Interface) ---
-elif st.session_state.page == "auth":
-    # Spacer to center the card vertically
+    # Continue Button - Blue, Less width, Centered
     st.write("")
+    if st.button("Continue ➔"):
+        st.session_state.page = "auth"
+        st.rerun()
+
+# --- PAGE 2: AUTH (Medical Sign-In) ---
+elif st.session_state.page == "auth":
+    # Spacer
     st.write("")
     
-    # Start of the Dark Sign-In Card
+    # Sign-In Layout
     with st.container():
-        st.markdown("""<div style='background-color: #1F1F1F; padding: 40px; border-radius: 28px;'>""", unsafe_allow_html=True)
+        # Header Row: Logo on Left, Project Name next to it
+        logo_col, title_col = st.columns([0.15, 0.85])
+        with logo_col:
+            st.image("https://cdn-icons-png.flaticon.com/512/2966/2966327.png", width=35)
+        with title_col:
+            st.markdown("<h2 style='margin:0; padding-top:5px; color:#1E3A8A;'>Med-Cloud Pro</h2>", unsafe_allow_html=True)
         
-        # 1. Medical Logo (Cross Icon)
-        st.image("https://cdn-icons-png.flaticon.com/512/2966/2966327.png", width=40)
+        st.markdown("<h3 style='margin-top:10px;'>Sign in</h3>", unsafe_allow_html=True)
         
-        # 2. Sign In to Project Name
-        st.markdown("<h2 style='color: white; margin-bottom:0;'>Sign in</h2>", unsafe_allow_html=True)
-        st.markdown("<p style='color: white !important; margin-bottom: 20px;'>Use your Med-Cloud Account</p>", unsafe_allow_html=True)
+        # ID Box (Label 'ID' removed above the box, moved to placeholder)
+        st.write("")
+        user_id_input = st.text_input("", placeholder="Enter your Unique ID", label_visibility="collapsed")
         
-        # 3. ID Input Box
-        user_id_input = st.text_input("ID", placeholder="Enter your Unique ID")
+        # Forgot ID Link (Styled as button)
+        st.markdown("<div class='forgot-btn'>", unsafe_allow_html=True)
+        if st.button("Forgot ID?"):
+            st.toast("Contact your caretaker for ID recovery.")
+        st.markdown("</div>", unsafe_allow_html=True)
         
-        # 4. Forgot ID
-        st.markdown("<p style='color: #A8C7FA; font-size: 14px; cursor: pointer;'>Forgot ID?</p>", unsafe_allow_html=True)
-        
-        # Spacer
         st.write("")
         st.write("")
         
-        # 5. Bottom Buttons (Create Account and Next)
-        col_btn1, col_btn2 = st.columns([1, 1])
-        with col_btn1:
+        # Bottom Actions: Create Account and Next
+        # Using columns to put them on opposite sides
+        col_act1, col_act2 = st.columns([1, 1])
+        with col_act1:
+            st.markdown("<div class='create-btn'>", unsafe_allow_html=True)
             if st.button("Create account"):
-                st.info("Registration: MED-" + str(random.randint(1000,9999)))
-        with col_btn2:
+                st.session_state.user_id = f"MED-{random.randint(1000,9999)}"
+                st.success(f"New ID: {st.session_state.user_id}")
+            st.markdown("</div>", unsafe_allow_html=True)
+            
+        with col_act2:
+            # Blue Next button with less width
             if st.button("Next"):
                 if user_id_input:
                     st.session_state.user_id = user_id_input
@@ -123,8 +139,9 @@ elif st.session_state.page == "auth":
                     st.rerun()
                 else:
                     st.error("Please enter ID")
-        
-        st.markdown("""</div>""", unsafe_allow_html=True)
 
-    # Small Footer
-    st.markdown("<p style='font-size: 12px; color: grey; text-align:center; margin-top:20px;'>English (United States)</p>", unsafe_allow_html=True)
+    # Back to Welcome link
+    st.write("")
+    if st.button("← Back to Welcome", key="back_btn"):
+        st.session_state.page = "welcome"
+        st.rerun()
